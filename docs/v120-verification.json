@@ -1,0 +1,230 @@
+{
+  "verifiedAt": "2026-11-05T18:56:16+08:00",
+  "pluginVersion": "1.2.0",
+  "dshVersion": "0.2.1-rc.5",
+  "environment": "隔离实例 DSH_HOME=/tmp/dsh-task-map-lab, dsh web --no-open --port 8097；会话为 ~/.dsh/sessions 只读副本（未写 ~/.dsh）；headless Chrome 1680×1050 @2x",
+  "scope": "流程图连线流向动画、连线悬停聚焦两端节点、点击卡片聚焦相邻节点、去掉点击卡片的 UA 焦点外框",
+  "sessions": [
+    {
+      "slug": "baklib-feishu-sso（真实副本）",
+      "tasks": 8,
+      "flowRows": 2,
+      "layout": "both + flow(单图)",
+      "usage": "基础态/连线悬停/卡片点击/回放中段/开关/键盘/暗色"
+    },
+    {
+      "slug": "p2p-athena-port（真实副本）",
+      "tasks": 9,
+      "flowRows": 3,
+      "layout": "both",
+      "usage": "紧凑档 hover 回归"
+    }
+  ],
+  "checks": {
+    "default": {
+      "focus": "none",
+      "dimmed": 0,
+      "outlines": "none"
+    },
+    "hoverExecutionLine": {
+      "focus": "edge",
+      "lit": [
+        "task-1",
+        "task-3"
+      ],
+      "dimmedOtherNodes": 6,
+      "activeRouteSegments": [
+        "task-1->task-3"
+      ],
+      "dimmedRouteSegments": 6,
+      "dimmedDependencyEdges": 6
+    },
+    "hoverDependencyLine": {
+      "focus": "edge",
+      "lit": [
+        "task-3",
+        "task-7"
+      ],
+      "dimmedOtherNodes": 6,
+      "focusedEdge": [
+        "task-3->task-7"
+      ],
+      "focusedEdgeStroke": "rgb(245, 158, 11)",
+      "dimmedRouteSegments": 7,
+      "dimmedOtherEdges": 5
+    },
+    "clickCard": {
+      "focus": "node",
+      "selected": "task-3",
+      "lit": [
+        "task-1",
+        "task-3",
+        "task-4",
+        "task-7"
+      ],
+      "dimmed": [
+        "task-2",
+        "task-5",
+        "task-6",
+        "task-8"
+      ],
+      "activeRouteSegments": [
+        "task-1->task-3",
+        "task-3->task-4"
+      ],
+      "activeDependencyEdges": [
+        "task-1->task-7",
+        "task-3->task-7",
+        "task-4->task-7"
+      ],
+      "outline": "none"
+    },
+    "hoverWhileSelected": {
+      "focus": "edge",
+      "hoverEdge": "task-5->task-6",
+      "lit": [
+        "task-5",
+        "task-6"
+      ],
+      "note": "悬停优先于选中聚焦"
+    },
+    "leaveLineBackToSelection": {
+      "focus": "node",
+      "lit": [
+        "task-1",
+        "task-3",
+        "task-4",
+        "task-7"
+      ],
+      "note": "离开连线回退到卡片聚焦"
+    },
+    "clickAgainClear": {
+      "focus": "none",
+      "dimmed": 0,
+      "note": "再次点击同一卡片取消聚焦/选中"
+    },
+    "keyboardFocus": {
+      "focusVisible": true,
+      "outline": "none",
+      "boxStrokeWidth": "2.4px",
+      "note": "键盘聚焦仍用卡片描边指示，无 UA 外框"
+    },
+    "singleFlowStretched": {
+      "focus": "edge",
+      "lit": [
+        "task-1",
+        "task-3"
+      ],
+      "dimmedOtherNodes": 6,
+      "note": "单图拉伸后命中/聚焦仍正确"
+    },
+    "compactRows": {
+      "focus": "edge",
+      "lit": [
+        "task-1",
+        "task-3"
+      ],
+      "dimmedOtherNodes": 7,
+      "note": "3 行紧凑档回归"
+    },
+    "darkTheme": {
+      "focus": "edge",
+      "lit": [
+        "task-1",
+        "task-3"
+      ],
+      "dimmedOtherNodes": 6
+    },
+    "replayMid75": {
+      "visibleSegments": 5,
+      "partialSegment": {
+        "key": "task-5->task-6",
+        "dasharray": 228,
+        "dashoffset": 102
+      },
+      "hiddenSegments": [
+        "task-6->task-8",
+        "task-8->task-7"
+      ],
+      "trailHead": {
+        "x": 688,
+        "y": 201
+      },
+      "note": "执行轨迹按段绘制进度与轨迹头位置正确（75% 时刻）"
+    },
+    "trailToggleOff": {
+      "routeLayerHidden": true
+    },
+    "depsToggleOff": {
+      "dependencyHitLayersVisible": 0
+    },
+    "reducedMotion": {
+      "flowAnimation": "none",
+      "dependencyAnimation": "none",
+      "nodeTransition": "0s"
+    },
+    "consoleErrors": [],
+    "replayFps": {
+      "fps": 117.3,
+      "note": "回放播放 2s 采样（含逐段进度更新 + 流向动画 + 全部节点），目标 ≥30fps"
+    },
+    "stretchProgress": {
+      "both": {
+        "viewBox": "0 0 944 262",
+        "partialSegment": {
+          "key": "task-5->task-6",
+          "dasharray": 228,
+          "dashoffset": 102
+        },
+        "trail": {
+          "x": 688,
+          "y": 201
+        }
+      },
+      "stretched": {
+        "viewBox": "0 0 944 562.1469147894221",
+        "partialSegment": {
+          "key": "task-5->task-6",
+          "dasharray": 228,
+          "dashoffset": 189.229
+        },
+        "trail": {
+          "x": 775.23,
+          "y": 467.38
+        }
+      },
+      "restored": {
+        "viewBox": "0 0 944 262",
+        "partialSegment": {
+          "key": "task-5->task-6",
+          "dasharray": 228,
+          "dashoffset": 102
+        },
+        "trail": {
+          "x": 688,
+          "y": 201
+        }
+      },
+      "note": "单图拉伸/恢复后分段长度与轨迹头按新几何重新测量，进度不丢"
+    }
+  },
+  "tests": {
+    "derive": 307,
+    "hostSmoke": 35,
+    "clientSmoke": 717,
+    "clientLogic": 358
+  },
+  "screenshots": [
+    "docs/v120-hover-line.png",
+    "docs/v120-hover-dep.png",
+    "docs/v120-click-focus.png",
+    "docs/v120-single-flow-hover.png",
+    "docs/v120-replay-mid.png",
+    "docs/v120-hover-dark.png"
+  ],
+  "limitations": [
+    "真实会话副本没有关系分叉连线（relation）样本：关系连线悬停复用与依赖连线相同的命中层与聚焦逻辑，由单测覆盖；未做真机 relation hover 截图。",
+    ">64 任务时关闭流向动画（性能保护），该分支由 client-smoke 65 任务渲染断言覆盖，未做大图 E2E。",
+    "无宿主桌面实例 token：验证使用隔离实例 + 真实会话只读副本，验证后已删除隔离 home/凭据副本。"
+  ]
+}

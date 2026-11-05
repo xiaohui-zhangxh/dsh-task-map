@@ -44,17 +44,17 @@ const SESSIONS_ROOT = path.resolve(
 const SESSIONS = [
   {
     slug: 'baklib-feishu-sso',
-    projectDir: '--Users-xiaohui-Codes-baklib--',
+    projectDir: '--workspace-baklib--',
     sessionId: 'session-a1c3d78d-eaa0-405e-807d-3c037524a987',
   },
   {
     slug: 'p2p-athena-port',
-    projectDir: '--Users-xiaohui-hermes-workspaces--',
+    projectDir: '--workspace-hermes-workspaces--',
     sessionId: 'session-886d1772-1e3c-4283-8703-58d74949bf8a',
   },
   {
     slug: 'athena-plan-board',
-    projectDir: '--Users-xiaohui-hermes-workspaces--',
+    projectDir: '--workspace-hermes-workspaces--',
     sessionId: 'session-7959b49b-7cde-41fa-8cf1-8156e91ae060',
   },
 ];

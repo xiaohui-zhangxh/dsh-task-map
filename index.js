@@ -17,7 +17,7 @@ export const inject = []
 
 const ROUTE = '/task-map/api/health'
 const KEY = 'taskMap'
-const VERSION = '1.1.3'
+const VERSION = '1.2.0'
 
 const status = {
   startedAt: Date.now(),

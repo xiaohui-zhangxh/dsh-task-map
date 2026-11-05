@@ -141,7 +141,7 @@ docs/golden-values.json                                     （黄金值，±0ms
 
 ### 4.3 脱敏
 
-1. 会话 `cwd` 前缀整体替换：`<cwd>` → `/workspace/<basename(cwd)>`，例如 `~/Codes/baklib` → `/workspace/baklib`、`~` → `/workspace/hermes-workspaces`；
+1. 会话 `cwd` 前缀整体替换：`<cwd>` → `/workspace/<basename(cwd)>`，例如 `~/Codes/baklib` → `/workspace/baklib`、`~/hermes-workspaces` → `/workspace/hermes-workspaces`；
 2. 其余 `/Users/<username>/...` 绝对路径兜底替换为 `/workspace/<top>/...`；只剩裸用户名时 → `/workspace`；
 3. 用户名 `xiaohui`、`/Users/` 绝对路径在 3 个 fixture 中的残留数均为 **0**（已用 grep 验证）。
 

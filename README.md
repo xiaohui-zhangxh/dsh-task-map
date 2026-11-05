@@ -1,6 +1,6 @@
 # DSH Task Map（任务地图）
 
-![Version](https://img.shields.io/badge/version-1.1.3-blue)
+![Version](https://img.shields.io/badge/version-1.2.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![DSH](https://img.shields.io/badge/DeepSeek%20Harness-%3E%3D0.2.1--rc.5-6b4cff)
 
@@ -14,7 +14,8 @@
 
 ## 功能
 
-- **任务流程图**：按执行顺序的 S 形布局、`blockedBy` 依赖曲线、关系分叉（支线）、轨迹生长、状态色、负责人色条、NEW 标记、计划未创建 Ghost；
+- **任务流程图**：按执行顺序的 S 形布局、`blockedBy` 依赖曲线、关系分叉（支线）、轨迹生长、状态色、负责人色条、NEW 标记、计划未创建 Ghost；卡片标题最多两行（超长省略号），长标题不再被 16 字硬截断；
+- **流程图交互**：连线有流动方向动画（执行顺序 / 依赖 / 关系）；悬停任一连线只聚焦该线两端节点，点击卡片聚焦自身与所有直连节点（其余节点灰度显示、其余连线淡出），再次点击取消；点击卡片不再出现浏览器焦点外框；
 - **甘特时间轴**：任务/代理/事件/热度四类行、会话前空闲带、播放头拖动、视口窗口化（200 任务降级）；
 - **导航式回放**：单一回放时钟 + `requestAnimationFrame`，60×/120×/300×/600×，播放/暂停/拖动/键盘（空格、←→、Esc），任意时刻状态可复现，未来事件不剧透；
 - **任务详情**：按回放时刻推导状态、状态区间、执行/排队/依赖阻塞/就绪延迟/交接、依赖与写入范围、按时间窗推断的执行过程、变更历史；
@@ -23,7 +24,7 @@
 - **计划基线 vs 变更**：基线快照、新增/移除/依赖变更/拆分、变更记录点击跳转回放时刻；
 - **关系记录**：`task_map_record_relation` 只读校验任务 id 后记录父子/拆分关系，渲染支线；父任务完成但子任务未完成只提示、不改状态；
 - **单图模式**：流程图/甘特图一键放大折叠（大屏一次只看一个图），窗口 resize / 最大化自适应；
-- **键盘无障碍**：Tab 焦点、Enter/Space 选择、`aria-*`、`prefers-reduced-motion`；暗/亮主题适配。
+- **键盘无障碍**：Tab 焦点、Enter/Space 选择、`aria-*`、`prefers-reduced-motion`（连线流向动画自动关闭）；暗/亮主题适配。
 
 ## 快速开始
 
@@ -88,8 +89,8 @@ DSH_HOME=/tmp/dsh-lab PROFILE=web ./scripts/install.sh
 npm test                       # 全部：derive + host + client-smoke + client-logic
 node test/derive.test.mjs      # 数据核心黄金测试（307 checks，3 个真实会话脱敏 fixture）
 node test/host-smoke.mjs       # Host stub ctx（投影/工具/health 鉴权，35 项）
-node test/client-smoke.mjs     # 客户端组件冒烟（661 checks）
-node test/client-logic.test.mjs# 客户端纯逻辑（329 checks）
+node test/client-smoke.mjs     # 客户端组件冒烟（717 checks）
+node test/client-logic.test.mjs# 客户端纯逻辑（358 checks）
 ```
 
 - `test/fixtures/*.jsonl`：3 个真实会话的脱敏快照；`docs/golden-values.json`：独立 Python 手算黄金值（时间/耗时/等待 ±0ms）；
@@ -98,11 +99,12 @@ node test/client-logic.test.mjs# 客户端纯逻辑（329 checks）
 
 ## 版本与已知限制
 
-- 当前版本 **1.1.3**（MVP 1.0.0 + 布局/计划/清理修复），完整变更见 [CHANGELOG.md](CHANGELOG.md)；
+- 当前版本 **1.2.0**（MVP 1.0.0 + 布局/计划/清理修复 + 流程图卡片两行标题 + 连线流向/悬停与点击聚焦交互），完整变更见 [CHANGELOG.md](CHANGELOG.md)；
 - 已知限制：
   - 「对话建任务 → 面板实时出现」未在隔离 web profile 端到端（无 Agent Teams）；关系工具已用真实模型调用验证；
   - 超长会话（>~60 任务）视图自动降级，详情「共 N 条」为累计口径；
   - 计划清单与团队任务不自动建立映射（计划 vs 执行两个视角，均只读）；
+  - 连线流向动画仅对 ≤64 任务的流程图开启（大图性能保护）；关系分叉连线与依赖连线共用同一套悬停/聚焦逻辑；
   - P1/P2（全局会话目录页、跨会话只读查询 `task_map_query`）未实现，属 Roadmap。
 
 ## Roadmap

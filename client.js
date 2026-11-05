@@ -31,7 +31,7 @@ window.__ModuleLoader__.load({
     const React = require('react')
     const h = React.createElement
     const PLUGIN_ID = '@local/dsh-task-map'
-    const CLIENT_VERSION = '1.1.3'
+    const CLIENT_VERSION = '1.2.0'
     const CLIENT_SCHEMA = 'task-map/client'
     const STYLE_ID = 'task-map-m2-style'
     const SESSION_SLOT_ORDER = 11
@@ -185,8 +185,14 @@ window.__ModuleLoader__.load({
       '#fb923c', '#a3e635', '#2dd4bf', '#60a5fa', '#f87171', '#c084fc',
     ]
     const KNOWN_OWNER_COLORS = { Lead: '#f59e0b', 未指派: '#94a3b8' }
-    // 任务图布局常量（与 research prototype 的 S 形布局一致：4 个/行、蛇形换行）
-    const FLOW = { COLS: 4, NW: 180, NH: 62, X0: 40, Y0: 46, GAPX: 48, GAPY: 58, BOTTOM: 26 }
+    // 任务图布局常量（与 research prototype 的 S 形布局一致：4 个/行、蛇形换行）。
+    // 卡片标题改为最多两行显示后，卡片需要更高：2 行内 70 / 行距 50（行步长仍为 120，总高基本不变）；
+    // 3~4 行用紧凑卡片（64/30），5+ 行用密集卡片（60/24）。内部排版见 flowNodeLayout()。
+    const FLOW = { COLS: 4, NW: 180, NH: 70, X0: 40, Y0: 46, GAPX: 48, GAPY: 50, BOTTOM: 26 }
+    const FLOW_COMPACT = { NH: 64, GAPY: 30 }
+    const FLOW_DENSE = { NH: 60, GAPY: 24 }
+    // 连线流向动画只为中小规模任务图开启（大图滚动场景避免上百条 path 的逐帧重绘）。
+    const FLOW_ANIMATE_LIMIT = 64
 
     // ------------------------------------------------------------------
     // 通用小工具（纯函数）
@@ -422,8 +428,8 @@ window.__ModuleLoader__.load({
       const cols = FLOW.COLS
       const rows = Math.max(1, Math.ceil(count / cols))
       // 行数多时压缩行高：2 行内保持原型尺寸；3 行与 4+ 行逐级压缩（配合面板自适应/滚动）。
-      const nodeHeight = rows <= 2 ? FLOW.NH : (rows <= 4 ? 54 : 50)
-      const gapY = rows <= 2 ? FLOW.GAPY : (rows <= 4 ? 40 : 32)
+      const nodeHeight = rows <= 2 ? FLOW.NH : (rows <= 4 ? FLOW_COMPACT.NH : FLOW_DENSE.NH)
+      const gapY = rows <= 2 ? FLOW.GAPY : (rows <= 4 ? FLOW_COMPACT.GAPY : FLOW_DENSE.GAPY)
       const width = FLOW.X0 * 2 + cols * FLOW.NW + (cols - 1) * FLOW.GAPX
       const height = FLOW.Y0 + rows * nodeHeight + (rows - 1) * gapY + FLOW.BOTTOM
       const positions = []
@@ -439,6 +445,47 @@ window.__ModuleLoader__.load({
         })
       }
       return { cols, rows, width, height, positions, nodeWidth: FLOW.NW, nodeHeight, gapY }
+    }
+
+    /**
+     * 任务图卡片内部排版（纯函数，供 FlowNode 与单元测试共用）。
+     *
+     * 标题最多两行（渲染层用 foreignObject + CSS line-clamp:2 截断）：
+     *   · 标准卡片（高度 ≥66，默认 70）：11.5px / 行高 13；
+     *   · 紧凑卡片（61~65，3~4 行任务图）：11px / 行高 12；
+     *   · 密集卡片（<61，5+ 行任务图）：10.5px / 行高 11.5。
+     * 标题块从卡片 36%/标准 27 的位置开始（拉伸后自动居中到卡片中线）；
+     * 负责人行贴底，并在单图模式拉伸（高度 96→166）时平滑上移到 76% 位置，
+     * 避免高卡片里负责人离标题太远。
+     */
+    function flowNodeLayout(nodeHeight) {
+      const raw = finite(nodeHeight)
+      const nh = raw === null || raw <= 0 ? FLOW.NH : raw
+      const tier = nh >= 66 ? 'normal' : (nh >= 61 ? 'compact' : 'dense')
+      const compact = tier !== 'normal'
+      const fontSize = tier === 'normal' ? 11.5 : (tier === 'compact' ? 11 : 10.5)
+      const lineHeight = tier === 'normal' ? 13 : (tier === 'compact' ? 12 : 11.5)
+      const subjectWidth = FLOW.NW - 13 - 10
+      const subjectTop = Math.round(Math.max(compact ? nh * 0.36 : 27, nh / 2 - lineHeight))
+      const bottomPad = tier === 'normal' ? 7 : (tier === 'compact' ? 6 : 5)
+      // 单图模式拉伸：高度 96 起把负责人行从「贴底」平滑过渡到「76% 位置」。
+      const tallT = clamp((nh - 96) / 70, 0, 1)
+      const ownerY = Math.round((nh - bottomPad) * (1 - tallT) + nh * 0.76 * tallT)
+      return {
+        tier,
+        compact,
+        maxLines: 2,
+        fontSize,
+        lineHeight,
+        headerCy: compact ? 14 : 17,
+        headerTextY: compact ? 17 : 20.4,
+        barY: compact ? 7 : 9,
+        subjectX: 13,
+        subjectTop,
+        subjectWidth,
+        subjectHeight: lineHeight * 2,
+        ownerY,
+      }
     }
 
     function flowNodeCenter(flow, index) {
@@ -516,6 +563,77 @@ window.__ModuleLoader__.load({
       const mx = (sx + ex) / 2 + direction * 46
       const my = (sy + ey) / 2
       return 'M' + round2(sx) + ',' + round2(sy) + ' Q' + round2(mx) + ',' + round2(my) + ' ' + round2(ex) + ',' + round2(ey)
+    }
+
+    /** 连线端点键（from->to，用于聚焦集合比较）。 */
+    function edgeKey(from, to) {
+      return text(from) + '->' + text(to)
+    }
+
+    /** 点击卡片时的聚焦节点集合：自身 + 所有连线（执行顺序/阻塞依赖/关系分叉）直连的任务。 */
+    function relatedTaskIds(prep, taskId) {
+      const id = text(taskId)
+      const result = new Set()
+      if (!id) return result
+      result.add(id)
+      const edges = prep && Array.isArray(prep.edges) ? prep.edges : []
+      for (const edge of edges) {
+        if (!isObject(edge)) continue
+        if (edge.from === id && edge.to) result.add(edge.to)
+        else if (edge.to === id && edge.from) result.add(edge.from)
+      }
+      return result
+    }
+
+    /**
+     * 流程图聚焦计算（悬停连线优先，其次点击卡片）：
+     *   · hoverEdge：只聚焦该连线两端的节点；
+     *   · selectedId：聚焦卡片自身 + 一跳直连节点；
+     *   · 两者都没有：返回 null（正常展示）。
+     * ids = 保持高亮的任务 id；edges = 保持高亮的连线键（from->to）。
+     */
+    function computeFlowFocus(prep, hoverEdge, selectedId) {
+      const hover = isObject(hoverEdge) ? hoverEdge : null
+      if (hover && hover.from && hover.to) {
+        return {
+          mode: 'edge',
+          ids: new Set([text(hover.from), text(hover.to)]),
+          edges: new Set([edgeKey(hover.from, hover.to)]),
+          edge: { from: text(hover.from), to: text(hover.to) },
+        }
+      }
+      const selected = text(selectedId)
+      if (!selected) return null
+      const ids = relatedTaskIds(prep, selected)
+      const activeEdges = new Set()
+      const edges = prep && Array.isArray(prep.edges) ? prep.edges : []
+      for (const edge of edges) {
+        if (!isObject(edge)) continue
+        if (ids.has(edge.from) && ids.has(edge.to)) activeEdges.add(edgeKey(edge.from, edge.to))
+      }
+      return { mode: 'node', ids, edges: activeEdges, edge: null }
+    }
+
+    /** 执行顺序连线分段：相邻任务中心之间的直线段（供流向动画、悬停聚焦、分段进度绘制）。 */
+    function buildFlowSegments(flow, tasks) {
+      const list = Array.isArray(tasks) ? tasks : []
+      const segments = []
+      if (!flow || !Array.isArray(flow.positions)) return segments
+      for (let index = 0; index < list.length - 1; index += 1) {
+        const fromCenter = flowNodeCenter(flow, index)
+        const toCenter = flowNodeCenter(flow, index + 1)
+        segments.push({
+          from: text(list[index] && list[index].id),
+          to: text(list[index + 1] && list[index + 1].id),
+          index,
+          x1: round2(fromCenter.x),
+          y1: round2(fromCenter.y),
+          x2: round2(toCenter.x),
+          y2: round2(toCenter.y),
+          path: 'M' + round2(fromCenter.x) + ',' + round2(fromCenter.y) + ' L' + round2(toCenter.x) + ',' + round2(toCenter.y),
+        })
+      }
+      return segments
     }
 
     /**
@@ -1486,6 +1604,7 @@ window.__ModuleLoader__.load({
         durationMs: timeEnd - timeStart,
         rawDurationMs: Math.max(0, rawTimeEnd - timeStart),
         timeline,
+        edges,
         flow,
         flowDepEdges,
         flowRelationEdges,
@@ -2012,7 +2131,7 @@ window.__ModuleLoader__.load({
         '.tm-legend .tm-legend-line i{width:14px;height:0;border-top:2px dashed var(--tm-dim2);border-radius:0}',
         '.tm-legend .tm-legend-route i{border-top:2px solid var(--tm-route)}',
         /* ---------- 流程图 ---------- */
-        '.tm-node{cursor:pointer}',
+        '.tm-node{cursor:pointer;transition:opacity .16s,filter .16s}',
         '.tm-node .tm-node-box{fill:var(--tm-bg2);stroke:var(--tm-line2);stroke-width:1.2;transition:fill .15s,stroke .15s}',
         '.tm-node:hover .tm-node-box{stroke:var(--tm-accent);fill:var(--tm-bg3)}',
         '.tm-node.tm-sel .tm-node-box{stroke:var(--tm-route);stroke-width:2}',
@@ -2023,7 +2142,8 @@ window.__ModuleLoader__.load({
         '.tm-node.tm-blocked .tm-node-box{stroke:var(--tm-blocked);stroke-width:1.6}',
         '.tm-node .tm-node-rank{font-size:10px;font-weight:700;fill:#0b1220;pointer-events:none}',
         '.tm-node .tm-node-id{font-size:9.5px;fill:var(--tm-dim);letter-spacing:.06em;pointer-events:none}',
-        '.tm-node .tm-node-subject{font-size:11.5px;font-weight:600;fill:var(--tm-text);pointer-events:none}',
+        '.tm-node .tm-node-subject{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:11.5px;line-height:13px;font-weight:600;color:var(--tm-text);pointer-events:none;word-break:break-word}',
+        '.tm-node .tm-node-subject-box{overflow:hidden;pointer-events:none}',
         '.tm-node .tm-node-owner{font-size:9.5px;fill:var(--tm-dim);pointer-events:none}',
         '.tm-node .tm-node-meta{font-size:9.5px;fill:var(--tm-dim2);font-variant-numeric:tabular-nums;pointer-events:none}',
         '.tm-node .tm-node-status{font-size:9px;font-weight:700;pointer-events:none}',
@@ -2032,13 +2152,30 @@ window.__ModuleLoader__.load({
         '@keyframes tm-pulse{0%,100%{opacity:.3;r:2.6}50%{opacity:1;r:4.6}}',
         '.tm-node .tm-node-new-bg{fill:var(--tm-bg);stroke:var(--tm-route);stroke-width:.8}',
         '.tm-node .tm-node-new-text{font-size:8px;font-weight:700;fill:var(--tm-route);pointer-events:none}',
-        '.tm-edge-dep{fill:none;stroke:var(--tm-dim2);stroke-width:1.15;stroke-dasharray:3 4;opacity:.62}',
-        '.tm-edge-dep.tm-ready{stroke:var(--tm-route);opacity:.9;stroke-dasharray:none;stroke-width:1.5}',
+        /* 连线聚焦：未参与聚焦的节点灰度、连线淡出；悬停连线高亮 */
+        '.tm-node[data-tm-dim="true"]{opacity:.26;filter:grayscale(1)}',
+        '.tm-edge-dep{fill:none;stroke:var(--tm-dim2);stroke-width:1.15;stroke-dasharray:3 4;opacity:.62;pointer-events:none}',
+        '.tm-edge-dep[data-tm-ready="true"]{stroke:var(--tm-route);opacity:.9;stroke-dasharray:none;stroke-width:1.5}',
         '.tm-edge-hidden{display:none}',
-        '.tm-edge-rel{fill:none;stroke:var(--tm-rel);stroke-width:1.4;stroke-dasharray:5 3;opacity:.85}',
-        '.tm-route-base{fill:none;stroke:var(--tm-line2);stroke-width:1.6;stroke-dasharray:2 6;stroke-linecap:round;opacity:.55}',
-        '.tm-route{fill:none;stroke:var(--tm-route);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;opacity:.9}',
-        '.tm-trail-head{fill:var(--tm-route)}',
+        '.tm-edge-rel{fill:none;stroke:var(--tm-rel);stroke-width:1.4;stroke-dasharray:5 3;opacity:.85;pointer-events:none}',
+        '.tm-edge-hit{fill:none;stroke:transparent;stroke-width:10;pointer-events:stroke;cursor:pointer}',
+        '.tm-edge-dep.tm-edge-dim,.tm-edge-rel.tm-edge-dim{opacity:.1}',
+        '.tm-edge-dep.tm-edge-focus,.tm-edge-rel.tm-edge-focus{opacity:1;stroke-width:2.4}',
+        '.tm-route-base{fill:none;stroke:var(--tm-line2);stroke-width:1.6;stroke-dasharray:2 6;stroke-linecap:round;opacity:.55;pointer-events:none}',
+        '.tm-route{fill:none;stroke:var(--tm-route);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;opacity:.9;pointer-events:none}',
+        '.tm-route-flow{fill:none;stroke:color-mix(in srgb,var(--tm-route) 42%,#fff);stroke-width:2.4;stroke-linecap:round;stroke-dasharray:1.5 14.5;opacity:.92;pointer-events:none}',
+        '.tm-route-base.tm-edge-dim,.tm-route.tm-edge-dim,.tm-route-flow.tm-edge-dim{opacity:.08}',
+        '.tm-route-hit{fill:none;stroke:transparent;stroke-width:12;pointer-events:stroke;cursor:pointer}',
+        '.tm-route-hit.tm-edge-focus{stroke:color-mix(in srgb,var(--tm-route) 38%,transparent);stroke-width:7}',
+        '.tm-trail-head{fill:var(--tm-route);pointer-events:none}',
+        /* 连线「流动方向」：虚线 dashoffset 负向循环 = 沿路径起点→终点流动（reduced-motion 下由全局规则关闭） */
+        '@keyframes tm-flow-dash{to{stroke-dashoffset:-16}}',
+        '@keyframes tm-flow-dash-7{to{stroke-dashoffset:-14}}',
+        '.tm-flow-animated .tm-route-flow{animation:tm-flow-dash 1.15s linear infinite}',
+        '.tm-flow-animated .tm-route-base{animation:tm-flow-dash 1.6s linear infinite}',
+        '.tm-flow-animated .tm-edge-dep{animation:tm-flow-dash-7 1.7s linear infinite}',
+        '.tm-flow-animated .tm-edge-dep[data-tm-ready="true"]{animation:none}',
+        '.tm-flow-animated .tm-edge-rel{animation:tm-flow-dash 1.35s linear infinite}',
         /* ---------- 甘特 ---------- */
         '.tm-tl-scroll{flex:1;min-height:0;overflow:auto;padding:0 4px 4px}',
         '.tm-tl-svg{display:block;width:100%;height:auto}',
@@ -2187,7 +2324,7 @@ window.__ModuleLoader__.load({
         '.tm-card-v{flex:1;word-break:break-word;font-size:11.5px}',
         /* ---------- 无障碍：键盘焦点 / reduced-motion ---------- */
         '.tm-root :focus-visible{outline:2px solid var(--tm-route);outline-offset:2px;border-radius:5px}',
-        '.tm-node:focus-visible{outline:none}',
+        '.tm-node:focus{outline:none}',
         '.tm-node:focus-visible .tm-node-box{stroke:var(--tm-accent);stroke-width:2.4}',
         '.tm-tl-bar:focus-visible{outline:none;stroke:var(--tm-route);stroke-width:2.4}',
         '.tm-change:focus-visible{outline-offset:1px}',
@@ -2468,6 +2605,7 @@ window.__ModuleLoader__.load({
       const moment = props.moment
       const prep = props.prep
       const relation = props.relation || { badgeCount: 0, childOf: '', highlighted: false }
+      const dimmed = props.dimmed === true
       const status = statusAtTime(task, moment)
       const future = !isCreatedAtTime(task, moment)
       const selected = props.selectedId === task.id
@@ -2481,20 +2619,18 @@ window.__ModuleLoader__.load({
         '执行 ' + fmtDur(task.execMs) + '｜排队 ' + fmtDur(task.queueMs) +
         (task.blockedWaitMs !== null ? '｜阻塞 ' + fmtDur(task.blockedWaitMs) : ''),
       ].join('\n')
-      // 行高压缩时（3+ 行）使用更紧凑的节点内部排版；单图模式放大节点时内容按比例纵向分布。
-      const compact = flow.nodeHeight < 58
-      const tall = flow.nodeHeight > 92
-      const headerCy = compact ? 14 : 17
-      const headerTextY = compact ? 17 : 20.4
-      const subjectY = tall ? Math.round(flow.nodeHeight * 0.5) : (compact ? flow.nodeHeight - 24 : flow.nodeHeight - 29)
-      const ownerY = tall ? Math.round(flow.nodeHeight * 0.76) : (compact ? flow.nodeHeight - 9 : flow.nodeHeight - 14)
-      const barY = compact ? 7 : 9
+      // 卡片内部排版：标题最多两行（foreignObject + CSS line-clamp:2）。
+      // 3+ 行任务图自动切紧凑/密集档；单图模式拉伸卡片时标题块居中、负责人行平滑上移。
+      const layout = flowNodeLayout(flow.nodeHeight)
+      const compact = layout.compact
       return h('g', {
         className: flowNodeClass(status, { future, selected }) + (relation.highlighted ? ' tm-child-hl' : ''),
         transform: 'translate(' + position.x + ',' + position.y + ')',
         'data-tm-node': task.id,
         'data-tm-task-id': task.id,
         'data-tm-task-status': status,
+        'data-tm-node-tier': layout.tier,
+        'data-tm-dim': dimmed ? 'true' : undefined,
         'data-tm-planned': future ? 'true' : 'false',
         'data-tm-new': task.isNew && !future ? 'true' : 'false',
         'data-tm-child-of': relation.childOf || undefined,
@@ -2530,16 +2666,16 @@ window.__ModuleLoader__.load({
         onBlur: () => props.tips.hide(),
       },
         h('rect', { className: 'tm-node-box', x: 0, y: 0, width: flow.nodeWidth, height: flow.nodeHeight, rx: 11 }),
-        h('rect', { className: 'tm-node-bar', x: 0, y: barY, width: 3.5, height: flow.nodeHeight - barY * 2, rx: 2, fill: color }),
-        h('circle', { className: 'tm-node-rank-bg', cx: 17, cy: headerCy, r: compact ? 7.5 : 8.5, fill: color }),
-        h('text', { className: 'tm-node-rank', x: 17, y: headerTextY, textAnchor: 'middle' },
+        h('rect', { className: 'tm-node-bar', x: 0, y: layout.barY, width: 3.5, height: flow.nodeHeight - layout.barY * 2, rx: 2, fill: color }),
+        h('circle', { className: 'tm-node-rank-bg', cx: 17, cy: layout.headerCy, r: compact ? 7.5 : 8.5, fill: color }),
+        h('text', { className: 'tm-node-rank', x: 17, y: layout.headerTextY, textAnchor: 'middle' },
           String(task.startRank === null ? task.order + 1 : task.startRank)),
-        h('text', { className: 'tm-node-id', x: compact ? 28 : 31, y: headerCy }, task.id.toUpperCase()),
-        h('circle', { className: 'tm-node-pulse', cx: flow.nodeWidth - 17, cy: headerCy, r: 3 }),
+        h('text', { className: 'tm-node-id', x: compact ? 28 : 31, y: layout.headerCy }, task.id.toUpperCase()),
+        h('circle', { className: 'tm-node-pulse', cx: flow.nodeWidth - 17, cy: layout.headerCy, r: 3 }),
         h('text', {
           className: 'tm-node-status',
           x: flow.nodeWidth - 25,
-          y: headerTextY,
+          y: layout.headerTextY,
           textAnchor: 'end',
           'data-tm-node-status': '1',
           style: { fill: statusColorVar(status) },
@@ -2584,13 +2720,28 @@ window.__ModuleLoader__.load({
             style: future ? { display: 'none' } : undefined,
           }, 'NEW')
           : null,
-        h('text', { className: 'tm-node-subject', x: 13, y: subjectY }, truncateText(task.subject, 16)),
-        h('text', { className: 'tm-node-owner', x: 13, y: ownerY, style: { fill: color } },
+        // 标题最多两行：foreignObject 里的 HTML 文本用 CSS line-clamp 自动换行/省略（CJK 与英文混排都准确）。
+        // 完整标题仍通过节点 aria-label / 自定义 tooltip / 详情面板提供。
+        h('foreignObject', {
+          className: 'tm-node-subject-box',
+          x: layout.subjectX,
+          y: layout.subjectTop,
+          width: layout.subjectWidth,
+          height: layout.subjectHeight,
+        }, h('div', {
+          className: 'tm-node-subject',
+          style: {
+            width: layout.subjectWidth + 'px',
+            fontSize: layout.fontSize + 'px',
+            lineHeight: layout.lineHeight + 'px',
+          },
+        }, task.subject)),
+        h('text', { className: 'tm-node-owner', x: 13, y: layout.ownerY, style: { fill: color } },
           truncateText(task.owner || '未指派', 15) + (task.ownerIsLead && task.owner !== 'Lead' ? ' · Lead' : '')),
         h('text', {
           className: 'tm-node-meta',
           x: flow.nodeWidth - 11,
-          y: ownerY,
+          y: layout.ownerY,
           textAnchor: 'end',
           'data-tm-node-meta': '1',
         }, meta))
@@ -2623,12 +2774,20 @@ window.__ModuleLoader__.load({
         const id = element.getAttribute('data-tm-node-new') || element.getAttribute('data-tm-node-new-text')
         newEls.push({ element, id, hidden: null })
       }
-      const routeEl = svg.querySelector('[data-tm-route]')
       const trailEl = svg.querySelector('[data-tm-trail]')
+      const routeSegs = []
+      const routeFound = svg.querySelectorAll('[data-tm-route]')
+      for (let index = 0; index < routeFound.length; index += 1) {
+        const element = routeFound[index]
+        let length = 0
+        try {
+          if (typeof element.getTotalLength === 'function') length = element.getTotalLength()
+        } catch (ignored) { length = 0 }
+        // 零长度段（单任务/重复中心点）不参与进度绘制，避免除零与空路径。
+        if (length > 0.01) routeSegs.push({ element, length })
+      }
       let routeLength = 0
-      try {
-        if (routeEl && typeof routeEl.getTotalLength === 'function') routeLength = routeEl.getTotalLength()
-      } catch (ignored) { routeLength = 0 }
+      for (const segment of routeSegs) routeLength += segment.length
       const startedTimes = []
       for (const task of prep.tasks) {
         if (finite(task.startedAt) !== null) startedTimes.push(task.startedAt)
@@ -2638,21 +2797,34 @@ window.__ModuleLoader__.load({
 
       return function applyFlowState(moment, selectedId) {
         const time = finite(moment) === null ? prep.timeEnd : moment
-        if (routeEl && routeLength > 0) {
+        if (routeSegs.length > 0 && routeLength > 0) {
           const started = countAtOrBefore(startedTimes, time)
           const fraction = prep.tasks.length <= 1 ? 0 : clamp(started / total, 0, 1)
-          routeEl.style.strokeDasharray = String(routeLength)
-          routeEl.style.strokeDashoffset = String(routeLength * (1 - fraction))
+          const played = routeLength * fraction
+          let before = 0
+          let trailPoint = null
+          for (const segment of routeSegs) {
+            const visible = clamp(played - before, 0, segment.length)
+            // 每段单独做 dasharray/dashoffset 揭示：等价于原单条路径的整体进度，但支持逐段 hover/灰显。
+            segment.element.style.strokeDasharray = String(segment.length)
+            segment.element.style.strokeDashoffset = String(segment.length - visible)
+            segment.element.style.display = visible > 0.01 ? '' : 'none'
+            if (trailPoint === null && played <= before + segment.length + 0.01) {
+              try {
+                trailPoint = typeof segment.element.getPointAtLength === 'function'
+                  ? segment.element.getPointAtLength(Math.max(0, visible))
+                  : null
+              } catch (ignored) { trailPoint = null }
+            }
+            before += segment.length
+          }
           if (trailEl) {
-            if (fraction <= 0) {
+            if (fraction <= 0 || !trailPoint) {
               trailEl.setAttribute('r', '0')
             } else {
-              try {
-                const point = routeEl.getPointAtLength(routeLength * fraction)
-                trailEl.setAttribute('cx', String(round2(point.x)))
-                trailEl.setAttribute('cy', String(round2(point.y)))
-                trailEl.setAttribute('r', '5')
-              } catch (ignored) { trailEl.setAttribute('r', '0') }
+              trailEl.setAttribute('cx', String(round2(trailPoint.x)))
+              trailEl.setAttribute('cy', String(round2(trailPoint.y)))
+              trailEl.setAttribute('r', '5')
             }
           }
         }
@@ -2722,7 +2894,8 @@ window.__ModuleLoader__.load({
           const ready = blocker ? statusAtTime(blocker, time) === 'completed' : false
           if (edge.ready !== ready) {
             edge.ready = ready
-            edge.element.classList.toggle('tm-ready', ready)
+            // 用 data 属性而非 class：React 重渲染会重写 class，但不会动这里维护的属性。
+            edge.element.setAttribute('data-tm-ready', ready ? 'true' : 'false')
             edge.element.setAttribute('marker-end', 'url(#tm-arrow-dep' + (ready ? '-on' : '') + (uid ? '-' + uid : '') + ')')
           }
           const dimmed = dependent ? !isCreatedAtTime(dependent, time) : false
@@ -2748,8 +2921,15 @@ window.__ModuleLoader__.load({
       const [mapViewport, setMapViewport] = React.useState({ width: 0, height: 0 })
       const [showDeps, setShowDeps] = React.useState(true)
       const [showTrail, setShowTrail] = React.useState(true)
+      // 连线悬停聚焦：{ from, to }（悬停优先于卡片选中聚焦；离开连线后回退到选中态）
+      const [hoverEdge, setHoverEdge] = React.useState(null)
       const moment = store ? store.getTime() : prep.timeEnd
-      const selectedId = selectionRef ? selectionRef.current : ''
+      // selectedId 同时来自 props（父组件 state，保证选中/切换时本组件重渲染）与 selectionRef（兼容旧调用/测试）。
+      const selectedId = props.selectedId !== undefined ? text(props.selectedId) : (selectionRef ? selectionRef.current : '')
+      const focus = React.useMemo(
+        () => computeFlowFocus(prep, hoverEdge, selectedId),
+        [prep, hoverEdge, selectedId],
+      )
       const settleRef = React.useRef(null)
 
       React.useEffect(() => {
@@ -2806,9 +2986,9 @@ window.__ModuleLoader__.load({
         if (layoutMode !== 'flow' || !mapViewport.width || !mapViewport.height) {
           return {
             flow: baseFlow,
-            route: prep.flowRoute,
             depEdges: prep.flowDepEdges,
             relEdges: prep.flowRelationEdges,
+            segments: buildFlowSegments(baseFlow, prep.tasks),
           }
         }
         const targetViewHeight = mapViewport.height * (baseFlow.width / Math.max(1, mapViewport.width))
@@ -2816,9 +2996,9 @@ window.__ModuleLoader__.load({
         if (flow === baseFlow) {
           return {
             flow: baseFlow,
-            route: prep.flowRoute,
             depEdges: prep.flowDepEdges,
             relEdges: prep.flowRelationEdges,
+            segments: buildFlowSegments(baseFlow, prep.tasks),
           }
         }
         const positionsByIndex = new Map()
@@ -2844,7 +3024,7 @@ window.__ModuleLoader__.load({
             })
           }
         }
-        return { flow, route: buildFlowPath(flow, prep.tasks.length), depEdges, relEdges }
+        return { flow, depEdges, relEdges, segments: buildFlowSegments(flow, prep.tasks) }
       }, [layoutMode, prep, mapViewport.width, mapViewport.height])
       const flow = localLayout.flow
 
@@ -2856,7 +3036,8 @@ window.__ModuleLoader__.load({
         updater(store.getTime(), selectionRef ? selectionRef.current : '')
         if (!store) return undefined
         return store.onFrame((momentNow) => updater(momentNow, selectionRef ? selectionRef.current : ''))
-      }, [prep, store, selectionRef, uid, highlightRef])
+        // 单图拉伸/窗口 resize 会改分段几何：重建更新器，让每段长度/轨迹头按新布局重新测量。
+      }, [prep, store, selectionRef, uid, highlightRef, layoutMode, mapViewport.width, mapViewport.height])
 
       React.useEffect(() => {
         if (settleRef.current) {
@@ -2867,7 +3048,7 @@ window.__ModuleLoader__.load({
       React.useEffect(() => {
         const svg = svgRef.current
         if (!svg) return undefined
-        const deps = svg.querySelectorAll('.tm-edge-dep')
+        const deps = svg.querySelectorAll('.tm-edge-dep, [data-tm-edge-hit="dep"]')
         for (let index = 0; index < deps.length; index += 1) deps[index].classList.toggle('tm-edge-hidden', !showDeps)
         return undefined
       }, [showDeps])
@@ -2875,15 +3056,18 @@ window.__ModuleLoader__.load({
       React.useEffect(() => {
         const svg = svgRef.current
         if (!svg) return undefined
-        const base = svg.querySelector('[data-tm-route-base]')
-        const route = svg.querySelector('[data-tm-route]')
-        const trail = svg.querySelector('[data-tm-trail]')
-        if (base) base.classList.toggle('tm-edge-hidden', !showTrail)
-        if (route) route.classList.toggle('tm-edge-hidden', !showTrail)
-        if (trail) trail.style.display = showTrail ? '' : 'none'
+        const layer = svg.querySelector('[data-tm-route-layer]')
+        if (layer) layer.classList.toggle('tm-edge-hidden', !showTrail)
         return undefined
       }, [showTrail])
 
+      // 聚焦判定：focus 为空 → 全部正常；否则未参与的节点/连线灰显，悬停连线单独高亮。
+      const edgeIsActive = (from, to) => !focus || focus.edges.has(edgeKey(from, to))
+      const edgeIsHovered = (from, to) => Boolean(focus && focus.mode === 'edge' && focus.edge.from === from && focus.edge.to === to)
+      const edgeHoverProps = (from, to) => ({
+        onMouseEnter: () => setHoverEdge({ from, to }),
+        onMouseLeave: () => setHoverEdge(null),
+      })
       const collapsed = isPanelCollapsed(layoutMode, 'flow')
       const onLayoutAction = (action) => {
         if (typeof props.onLayoutMode === 'function') props.onLayoutMode(layoutActionToMode(action))
@@ -2909,17 +3093,19 @@ window.__ModuleLoader__.load({
                 '执行轨迹'),
             collapsed
               ? null
-              : h('span', { className: 'tm-hint' }, '点击任务查看详情'),
+              : h('span', { className: 'tm-hint' }, '悬停连线聚焦两端 · 点击任务查看详情'),
             h(LayoutModeButton, { action: flowAction, onAction: onLayoutAction })),
         }),
         h('div', { className: 'tm-map-scroll' + (flow.rows <= 3 && layoutMode !== 'flow' ? ' tm-flow-fit' : ''), ref: mapScrollRef },
           h('svg', {
-            className: 'tm-flow-svg',
+            className: 'tm-flow-svg' + (prep.tasks.length <= FLOW_ANIMATE_LIMIT ? ' tm-flow-animated' : ''),
             ref: svgRef,
             viewBox: '0 0 ' + flow.width + ' ' + flow.height,
             preserveAspectRatio: 'xMidYMin meet',
             role: 'group',
             'aria-label': '任务流程图（可用 Tab 聚焦节点，Enter/空格选中）',
+            'data-tm-focus': focus ? focus.mode : 'none',
+            'data-tm-hover-edge': focus && focus.mode === 'edge' ? edgeKey(focus.edge.from, focus.edge.to) : '',
           },
             h('defs', null,
               h('marker', { id: 'tm-arrow-dep-' + uid, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' },
@@ -2932,30 +3118,53 @@ window.__ModuleLoader__.load({
               '执行顺序 = 编号顺序 · 虚线 = 阻塞依赖 · 紫色 = 关系分叉'),
             localLayout.depEdges.map((edge) => h('path', {
               key: 'dep-' + edge.from + '->' + edge.to,
-              className: 'tm-edge-dep' + (showDeps ? '' : ' tm-edge-hidden'),
+              className: 'tm-edge-dep' + (showDeps ? '' : ' tm-edge-hidden') +
+                (edgeIsActive(edge.from, edge.to) ? '' : ' tm-edge-dim') +
+                (edgeIsHovered(edge.from, edge.to) ? ' tm-edge-focus' : ''),
               d: edge.path,
               'data-tm-edge-dep': edge.from + '->' + edge.to,
               markerEnd: 'url(#tm-arrow-dep-' + uid + ')',
             })),
             localLayout.relEdges.map((edge) => h('path', {
               key: 'rel-' + edge.from + '->' + edge.to,
-              className: 'tm-edge-rel',
+              className: 'tm-edge-rel' +
+                (edgeIsActive(edge.from, edge.to) ? '' : ' tm-edge-dim') +
+                (edgeIsHovered(edge.from, edge.to) ? ' tm-edge-focus' : ''),
               d: edge.path,
               'data-tm-edge-rel': edge.from + '->' + edge.to,
               markerEnd: 'url(#tm-arrow-rel-' + uid + ')',
             })),
-            localLayout.route
-              ? h('path', { className: 'tm-route-base', d: localLayout.route, 'data-tm-route-base': '1' })
-              : null,
-            localLayout.route
-              ? h('path', {
-                className: 'tm-route',
-                d: localLayout.route,
-                'data-tm-route': '1',
-                style: { display: showTrail ? '' : 'none' },
-              })
-              : null,
-            h('circle', { className: 'tm-trail-head', r: 0, cx: 0, cy: 0, 'data-tm-trail': '1', style: { display: showTrail ? '' : 'none' } }),
+            h('g', { className: 'tm-route-layer', 'data-tm-route-layer': '1' },
+              localLayout.segments.map((segment) => {
+                const key = edgeKey(segment.from, segment.to)
+                const dimClass = edgeIsActive(segment.from, segment.to) ? '' : ' tm-edge-dim'
+                const focusClass = edgeIsHovered(segment.from, segment.to) ? ' tm-edge-focus' : ''
+                return h('g', { key: 'route-seg-' + key, className: 'tm-route-seg' },
+                  h('path', { className: 'tm-route-base' + dimClass, d: segment.path, 'data-tm-route-base': '1' }),
+                  h('path', { className: 'tm-route' + dimClass, d: segment.path, 'data-tm-route-seg': key, 'data-tm-route': '1' }),
+                  h('path', { className: 'tm-route-flow' + dimClass, d: segment.path, 'aria-hidden': 'true' }),
+                  h('path', Object.assign({
+                    className: 'tm-route-hit' + focusClass,
+                    d: segment.path,
+                    'data-tm-route-hit': key,
+                  }, edgeHoverProps(segment.from, segment.to))))
+              }),
+              h('circle', { className: 'tm-trail-head', r: 0, cx: 0, cy: 0, 'data-tm-trail': '1' })),
+            // 连线命中层：透明加宽描边，避免 1.15~1.5px 细线难以悬停；放在轨迹层之上保证交叉处可命中。
+            localLayout.depEdges.map((edge) => h('path', Object.assign({
+              key: 'dep-hit-' + edge.from + '->' + edge.to,
+              className: 'tm-edge-hit' + (showDeps ? '' : ' tm-edge-hidden'),
+              d: edge.path,
+              'data-tm-edge-hit': 'dep',
+              'data-tm-edge-pair': edge.from + '->' + edge.to,
+            }, edgeHoverProps(edge.from, edge.to)))),
+            localLayout.relEdges.map((edge) => h('path', Object.assign({
+              key: 'rel-hit-' + edge.from + '->' + edge.to,
+              className: 'tm-edge-hit',
+              d: edge.path,
+              'data-tm-edge-hit': 'rel',
+              'data-tm-edge-pair': edge.from + '->' + edge.to,
+            }, edgeHoverProps(edge.from, edge.to)))),
             prep.tasks.map((task, index) => {
               const highlightedChildren = highlightRef && highlightRef.current && Array.isArray(highlightRef.current.children)
                 ? highlightRef.current.children
@@ -2969,6 +3178,7 @@ window.__ModuleLoader__.load({
                 moment,
                 prep,
                 selectedId,
+                dimmed: Boolean(focus && !focus.ids.has(task.id)),
                 onSelect: props.onSelect,
                 tips,
                 relation: {
@@ -4520,6 +4730,7 @@ window.__ModuleLoader__.load({
             prep,
             store,
             tips,
+            selectedId,
             selectionRef,
             highlightRef,
             layoutMode,
@@ -4868,6 +5079,7 @@ window.__ModuleLoader__.load({
         styleText,
         constants: {
           FLOW,
+          FLOW_ANIMATE_LIMIT,
           TIMELINE,
           SPEEDS,
           OWNER_PALETTE,
@@ -4924,6 +5136,11 @@ window.__ModuleLoader__.load({
           relationChildrenOf,
           relationParentOf,
           relationBadgeCount,
+          flowNodeLayout,
+          edgeKey,
+          relatedTaskIds,
+          computeFlowFocus,
+          buildFlowSegments,
         },
         layoutStore,
         prepareView,

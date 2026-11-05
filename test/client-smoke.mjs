@@ -128,7 +128,7 @@ const plugin = captured.factory((id) => {
 const api = plugin.__test
 ok(plugin && typeof plugin.apply === 'function', 'plugin exports apply()')
 ok(Array.isArray(plugin.inject) && plugin.inject.includes('slots'), 'plugin injects slots')
-ok(api && api.version === '1.1.3', 'client version marker = 1.1.3', api && api.version)
+ok(api && api.version === '1.2.0', 'client version marker = 1.2.0', api && api.version)
 
 const registered = []
 const injections = []
@@ -145,10 +145,10 @@ plugin.apply(ctx)
 ok(window.__TASK_MAP_M0__ && window.__TASK_MAP_M0__.loaded === true, 'window.__TASK_MAP_M0__ 兼容标记')
 ok(Array.isArray(window.__TASK_MAP_M0__.slots) && window.__TASK_MAP_M0__.slots.length === 3, 'M0 标记 slots = 3')
 ok(window.__TASK_MAP_M2__ && window.__TASK_MAP_M2__.loaded === true, 'window.__TASK_MAP_M2__ loaded')
-ok(window.__TASK_MAP_M2__.version === '1.1.3', '客户端版本标记 1.1.3', window.__TASK_MAP_M2__.version)
+ok(window.__TASK_MAP_M2__.version === '1.2.0', '客户端版本标记 1.2.0', window.__TASK_MAP_M2__.version)
 ok(Array.isArray(window.__TASK_MAP_M2__.errors), 'M2 errors 数组')
 ok(attrs['data-task-map-plugin'] === 'm2', 'html marker data-task-map-plugin=m2', attrs['data-task-map-plugin'])
-ok(attrs['data-task-map-client-version'] === '1.1.3', 'html marker client version', attrs['data-task-map-client-version'])
+ok(attrs['data-task-map-client-version'] === '1.2.0', 'html marker client version', attrs['data-task-map-client-version'])
 ok(injections.includes('main') && injections.includes('sidebar.panellist') && injections.includes('conversation.view'), 'slot injections requested', injections.join(','))
 ok(registered.length === 3, '三个 slot 注册', String(registered.length))
 const byName = Object.fromEntries(registered.map((entry) => [entry.options.name, entry]))
@@ -310,6 +310,40 @@ ok(tipSnapshot.visible === true, 'hover 节点显示 tooltip')
 ok(tipSnapshot.payload && tipSnapshot.payload.kind === 'task' && tipSnapshot.payload.taskId === 'task-3', 'tooltip payload 指向 task-3')
 nodeById['task-3'].props.onMouseLeave()
 ok(tips.get().visible === false, '离开节点隐藏 tooltip')
+
+// —— v1.2.0 连线流向 / 悬停聚焦 / 点击聚焦 / 去掉点击外框 ——
+const routeSegs = findAll(flowTree, (node) => node.props && node.props['data-tm-route-seg'])
+ok(routeSegs.length === 7, '执行顺序按段渲染（8 节点 = 7 段）', String(routeSegs.length))
+const routeHits = findAll(flowTree, (node) => node.props && node.props['data-tm-route-hit'])
+ok(routeHits.length === 7 && routeHits.every((hit) => typeof hit.props.onMouseEnter === 'function' && typeof hit.props.onMouseLeave === 'function'), '每段执行轨迹有加宽命中层 + 悬停回调')
+const edgeHits = findAll(flowTree, (node) => node.props && node.props['data-tm-edge-hit'])
+ok(edgeHits.length === 7, '依赖/关系连线命中层 = 6 + 1（不依赖 1px 细线命中）', String(edgeHits.length))
+ok(edgeHits.every((hit) => typeof hit.props.onMouseEnter === 'function'), '连线命中层带悬停回调')
+const flowSvg = findOne(flowTree, (node) => node.type === 'svg' && /tm-flow-svg/.test(node.props.className || ''))
+ok(flowSvg && flowSvg.props['data-tm-focus'] === 'none', '默认无聚焦（data-tm-focus=none）', flowSvg && flowSvg.props['data-tm-focus'])
+ok(flowSvg && /tm-flow-animated/.test(flowSvg.props.className), '中小任务图开启连线流向动画', flowSvg && flowSvg.props.className)
+ok(findAll(flowTree, (node) => node.props && /tm-route-flow/.test(node.props.className || '')).length === 7, '每段执行轨迹有流向动画层（tm-route-flow）')
+ok(findAll(flowTree, (node) => node.props && node.props['data-tm-dim'] === 'true').length === 0, '默认无灰显节点')
+
+// 选中卡片：聚焦自身 + 直连节点（其余灰显），连线只在聚焦集合内的两两之间保持高亮
+const focusTree = renderFlow(prep.timeEnd, 'task-4')
+const focusSvg = findOne(focusTree, (node) => node.type === 'svg' && /tm-flow-svg/.test(node.props.className || ''))
+ok(focusSvg && focusSvg.props['data-tm-focus'] === 'node', '选中卡片 → 聚焦模式 node', focusSvg && focusSvg.props['data-tm-focus'])
+const focusNodes = findAll(focusTree, isNode)
+const dimIds = focusNodes.filter((node) => node.props['data-tm-dim'] === 'true').map((node) => node.props['data-tm-node'])
+const litIds = focusNodes.filter((node) => node.props['data-tm-dim'] !== 'true').map((node) => node.props['data-tm-node'])
+ok(litIds.join(',') === 'task-3,task-4,task-5,task-8,task-7', '点击卡片：自身 + 直连节点（顺序/依赖/关系）保持高亮', litIds.join(','))
+ok(dimIds.join(',') === 'task-1,task-2,task-6', '点击卡片：其余节点灰显', dimIds.join(','))
+const focusSegEls = findAll(focusTree, (node) => node.props && node.props['data-tm-route-seg'])
+const activeSegs = focusSegEls.filter((el) => !/tm-edge-dim/.test(el.props.className || '')).map((el) => el.props['data-tm-route-seg'])
+ok(activeSegs.join(',') === 'task-3->task-4,task-4->task-5,task-8->task-7', '点击卡片：与聚焦集合相连的执行轨迹段保持高亮', activeSegs.join(','))
+ok(focusSegEls.filter((el) => /tm-edge-dim/.test(el.props.className || '')).length === 4, '点击卡片：其余执行轨迹段淡出')
+const focusDeps = findAll(focusTree, (node) => node.props && node.props['data-tm-edge-dep'])
+const activeDeps = focusDeps.filter((el) => !/tm-edge-dim/.test(el.props.className || '')).map((el) => el.props['data-tm-edge-dep'])
+ok(activeDeps.join(',') === 'task-3->task-7,task-4->task-7,task-5->task-7', '点击卡片：两端都在聚焦集合内的依赖连线保持高亮', activeDeps.join(','))
+const focusRel = findOne(focusTree, (node) => node.props && node.props['data-tm-edge-rel'])
+ok(focusRel && !/tm-edge-dim/.test(focusRel.props.className || ''), '点击卡片：关系分叉连线保持高亮')
+ok(collectText(focusTree).includes('悬停连线聚焦两端 · 点击任务查看详情'), '面板提示文案说明新交互')
 
 // 选中态：选中任务在渲染中带 tm-sel
 const selectedTree = renderFlow(prep.timeEnd, 'task-4')
@@ -1128,6 +1162,12 @@ const css = styleElement ? styleElement.textContent : ''
 ok(css.includes('--dsw-alias-label-primary') && css.includes('--dsw-alias-bg-layer-1'), 'CSS 使用 --dsw-alias-* 主题变量')
 ok(css.includes('.tm-root') && css.includes('.tm-node') && css.includes('.tm-tl-bar'), 'CSS 类名 tm- 前缀')
 ok(css.includes('@media (prefers-reduced-motion: reduce)'), 'CSS 支持 prefers-reduced-motion')
+// v1.2.0 连线流向 / 聚焦 / 去掉点击外框
+ok(css.includes('@keyframes tm-flow-dash') && css.includes('.tm-node[data-tm-dim="true"]'), 'CSS：连线流向动画 / 节点灰显规则存在')
+ok(css.includes('.tm-node:focus{outline:none}'), 'CSS：点击卡片不再显示 UA 焦点外框（键盘 :focus-visible 仍用描边指示）')
+ok(css.includes('.tm-route-hit') && css.includes('.tm-edge-hit'), 'CSS：执行轨迹/依赖连线都有加宽透明命中层')
+ok(css.includes('.tm-edge-dep[data-tm-ready="true"]'), 'CSS：依赖边 ready 态用 data 属性（避免 React 重渲染覆盖）')
+ok(css.includes('.tm-flow-animated .tm-route-flow'), 'CSS：流向动画仅对中小任务图开启')
 ok(!css.includes('@import'), 'CSS 无外部 @import')
 ok(css.includes(':focus-visible'), 'CSS 提供键盘焦点可见样式')
 
@@ -1151,7 +1191,7 @@ const warnChip = findOne(warnTree, (node) => node.props && node.props['data-tm-w
 ok(warnChip && warnChip.props['data-tm-warnings'] === '2' && hasText(warnTree, '数据缺失'), 'warnings 数量 chip 展示')
 ok(hasText(warnTree, '数据提示'), '总览 warnings 提示文案')
 
-// ---- 长文案截断（节点文本截断 + title 全量）----
+// ---- 长文案：流程图卡片标题最多两行（foreignObject + CSS line-clamp:2）----
 const longSubject = '这是一个非常非常长的任务标题用于验证节点文字截断与 hover 提示不应该撑破布局'.repeat(3)
 const longView = Object.assign({}, view, {
   tasks: [{ id: 'long-1', subject: longSubject, status: 'completed', owner: 'Lead', createdAt: mock.base + 1000, startedAt: mock.base + 2000, completedAt: mock.base + 3000, phases: [{ status: 'pending', at: mock.base + 1000 }, { status: 'completed', at: mock.base + 3000 }], startRank: 1, doneRank: 1, writeScopes: [], blockedBy: [] }],
@@ -1167,8 +1207,15 @@ const longFlow = expand(api.components.TaskFlow({
   selectionRef: { current: '' },
   onSelect: () => {},
 }))
-const longNodeTexts = collectText(longFlow)
-ok(longNodeTexts.some((text) => text.length <= 17 && text.endsWith('…')), '长标题节点文本截断为 ≤17 字 + 省略号')
+const longSubjectBoxes = findAll(longFlow, (node) => node.type === 'foreignObject')
+ok(longSubjectBoxes.length === 1, '每个任务节点 1 个标题容器（foreignObject）', String(longSubjectBoxes.length))
+const longSubjectDiv = findOne(longFlow, (node) => node.type === 'div' && node.props.className === 'tm-node-subject')
+ok(Boolean(longSubjectDiv) && collectText(longSubjectDiv).some((text) => text.includes('验证节点文字截断')), '长标题完整保留在标题容器（两行截断交给 CSS）')
+const longSubjectStyle = longSubjectDiv ? longSubjectDiv.props.style || {} : {}
+ok(longSubjectStyle.fontSize === '11.5px' && longSubjectStyle.lineHeight === '13px' && longSubjectStyle.width === '157px', '标准卡片标题排版参数由 flowNodeLayout 注入', JSON.stringify(longSubjectStyle))
+const longTitleBox = longSubjectBoxes[0]
+ok(longTitleBox && longTitleBox.props.height === 26 && longTitleBox.props.width === 157, '标题容器高 = 两行（26）/ 宽 157', longTitleBox ? longTitleBox.props.height + 'x' + longTitleBox.props.width : 'missing')
+ok(css.includes('-webkit-line-clamp:2') && css.includes('-webkit-box-orient:vertical'), 'CSS 标题两行截断规则（line-clamp:2）存在')
 const longTitle = findOne(longFlow, (node) => node.type === 'title' && collectText(node).some((text) => text.includes('验证节点文字截断')))
 ok(!longTitle, '节点不渲染 SVG <title>（原生提示已移除，改用自定义 tooltip）；aria-label 提供完整标题', longTitle ? 'still present' : '')
 
@@ -1204,6 +1251,25 @@ const renderElapsed = Date.now() - renderStart
 ok(Boolean(perfTree) && renderElapsed < 500, '19 任务首屏组件渲染 < 500ms（实测 ' + renderElapsed + 'ms）')
 ok(findAll(perfTree, isNode).length === 19, '19 任务流图节点全部渲染')
 ok(hasText(perfTree, '滚动查看全部'), '长会话（>3 行）任务图提示「滚动查看全部」')
+
+// 大任务图（>64）：关闭连线流向动画，避免上百条 path 逐帧重绘
+const bigBase = mock.base
+const bigView = {
+  tasks: Array.from({ length: 65 }, (_, index) => ({ id: 'big-' + index, subject: '大图任务 ' + index, status: 'completed', owner: 'Lead', createdAt: bigBase + index * 1000, startedAt: bigBase + index * 1000 + 100, completedAt: bigBase + index * 1000 + 500, phases: [{ status: 'pending', at: bigBase + index * 1000 }, { status: 'completed', at: bigBase + index * 1000 + 500 }], startRank: index + 1 })),
+  timeRange: { start: bigBase, end: bigBase + 70000 },
+  asOfTime: bigBase + 70000,
+}
+const bigPrep = api.prepareView(bigView)
+const bigTree = expand(api.components.TaskFlow({
+  prep: bigPrep,
+  store: api.createReplayStore({ start: bigPrep.timeStart, end: bigPrep.timeEnd }),
+  tips: api.createTooltipStore(),
+  selectionRef: { current: '' },
+  onSelect: () => {},
+}))
+const bigSvg = findOne(bigTree, (node) => node.type === 'svg' && /tm-flow-svg/.test(node.props.className || ''))
+ok(bigSvg && !/tm-flow-animated/.test(bigSvg.props.className), '>64 任务：自动关闭连线流向动画（性能保护）', bigSvg && bigSvg.props.className)
+ok(findAll(bigTree, (node) => node.props && node.props['data-tm-route-hit']).length === 64, '>64 任务：执行轨迹仍按段渲染（64 段）', String(findAll(bigTree, (node) => node.props && node.props['data-tm-route-hit']).length))
 
 console.log('\n[client-smoke] 纯逻辑（S 形布局 / 状态推导 / 二分 / 回放 store / 容错）')
 // ==================================================================

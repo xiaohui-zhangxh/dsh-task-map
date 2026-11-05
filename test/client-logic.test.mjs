@@ -85,7 +85,7 @@ export function runLogicTests(api, ok) {
   ok(u.fmtClock(65432) === '01:05', 'fmtClock(65432) = 01:05', u.fmtClock(65432))
   ok(u.fmtClock(3725000) === '1:02:05', 'fmtClock(3725000) = 1:02:05', u.fmtClock(3725000))
   ok(u.truncateText('abcdefghij', 5) === 'abcd…', 'truncateText 截断加省略号', u.truncateText('abcdefghij', 5))
-  ok(u.shortPath('/Users/xiaohui/Codes/a') === '~/Codes/a', 'shortPath 压缩 home', u.shortPath('/Users/xiaohui/Codes/a'))
+  ok(u.shortPath('/Users/user/Codes/a') === '~/Codes/a', 'shortPath 压缩 home', u.shortPath('/Users/user/Codes/a'))
 
   // ---------- 2. 负责人稳定配色 ----------
   ok(u.ownerColorFor('Lead') === '#f59e0b', 'Lead 固定色')
@@ -99,12 +99,12 @@ export function runLogicTests(api, ok) {
   const flow1 = api.computeFlowLayout(1)
   ok(flow1.rows === 1 && flow1.positions.length === 1, '1 任务：1 行 1 节点')
   ok(flow1.positions[0].x === 40 && flow1.positions[0].y === 46, '1 任务：首节点坐标 = (40,46)', JSON.stringify(flow1.positions[0]))
-  ok(flow1.height === 46 + 62 + 26, '1 任务：高度公式', String(flow1.height))
+  ok(flow1.height === 46 + 70 + 26, '1 任务：高度公式', String(flow1.height))
   const flow8 = api.computeFlowLayout(8)
   ok(flow8.rows === 2, '8 任务：2 行', String(flow8.rows))
   ok(flow8.width === 944, '流程图宽度 944（4 列）', String(flow8.width))
-  ok(flow8.height === 46 + 2 * 62 + 58 + 26, '8 任务：高度 = 254（保持原型尺寸）', String(flow8.height))
-  ok(flow8.nodeHeight === 62 && flow8.gapY === 58, '8 任务（2 行）：原型行高 62 / 行距 58')
+  ok(flow8.height === 46 + 2 * 70 + 50 + 26, '8 任务：高度 = 262（标题两行后行高 70 / 行距 50，行步长仍 120）', String(flow8.height))
+  ok(flow8.nodeHeight === 70 && flow8.gapY === 50, '8 任务（2 行）：标准卡片 70 / 行距 50')
   // 偶数行左→右：index 0..3 的 x 递增
   ok(flow8.positions[0].x < flow8.positions[1].x && flow8.positions[1].x < flow8.positions[2].x && flow8.positions[2].x < flow8.positions[3].x, '偶数行左→右')
   // 奇数行右→左（S 形）：index 4 在最右侧，index 7 在最左侧
@@ -114,15 +114,74 @@ export function runLogicTests(api, ok) {
   const flow19 = api.computeFlowLayout(19)
   ok(flow19.rows === 5, '19 任务：5 行', String(flow19.rows))
   ok(flow19.height === 46 + flow19.rows * flow19.nodeHeight + (flow19.rows - 1) * flow19.gapY + 26, '19 任务：高度按压缩行高公式', String(flow19.height))
-  ok(flow19.nodeHeight === 50 && flow19.gapY === 32, '19 任务（5 行）：压缩行高 50 / 行距 32', flow19.nodeHeight + '/' + flow19.gapY)
+  ok(flow19.nodeHeight === 60 && flow19.gapY === 24, '19 任务（5 行）：密集卡片 60 / 行距 24', flow19.nodeHeight + '/' + flow19.gapY)
   const flow0 = api.computeFlowLayout(0)
   ok(flow0.rows === 1 && flow0.positions.length === 0, '0 任务：仍返回 1 行空布局')
   const route = api.buildFlowPath(flow8, 8)
   ok(route.startsWith('M') && route.split(' L').length === 8, '执行轨迹路径含 8 个节点', route.slice(0, 40))
-  const depPath = api.buildDependencyPath(flow8.positions[0], flow8.positions[7], 180, 62)
+  const depPath = api.buildDependencyPath(flow8.positions[0], flow8.positions[7], flow8.nodeWidth, flow8.nodeHeight)
   ok(depPath.startsWith('M') && depPath.includes('Q'), '依赖边是二次曲线', depPath)
-  const relPath = api.buildRelationPath(flow8.positions[3], flow8.positions[7], 180, 62, 'left')
+  const relPath = api.buildRelationPath(flow8.positions[3], flow8.positions[7], flow8.nodeWidth, flow8.nodeHeight, 'left')
   ok(relPath.startsWith('M') && relPath.includes('Q'), '关系边是二次曲线', relPath)
+  const flow12 = api.computeFlowLayout(12)
+  ok(flow12.rows === 3 && flow12.nodeHeight === 64 && flow12.gapY === 30, '12 任务（3 行）：紧凑卡片 64 / 行距 30', flow12.nodeHeight + '/' + flow12.gapY)
+
+  // ---------- 3.5 v1.1.4 流程图卡片：标题最多两行排版 ----------
+  const layBase = u.flowNodeLayout(70)
+  ok(layBase.tier === 'normal' && layBase.maxLines === 2, '70 卡片：标准档 / 标题最多两行', layBase.tier)
+  ok(layBase.fontSize === 11.5 && layBase.lineHeight === 13, '70 卡片：标题 11.5px / 行高 13', layBase.fontSize + '/' + layBase.lineHeight)
+  ok(layBase.subjectTop === 27 && layBase.subjectHeight === 26, '70 卡片：标题块 y=27 / 高 26（两行）', layBase.subjectTop + '/' + layBase.subjectHeight)
+  ok(layBase.ownerY === 63 && layBase.ownerY + 3 <= 70, '70 卡片：负责人行贴底且不越界', String(layBase.ownerY))
+  const layCompact = u.flowNodeLayout(64)
+  ok(layCompact.tier === 'compact' && layCompact.fontSize === 11 && layCompact.lineHeight === 12, '64 卡片：紧凑档 11px / 行高 12', layCompact.tier)
+  ok(layCompact.ownerY === 58 && layCompact.subjectTop + layCompact.subjectHeight < layCompact.ownerY, '64 卡片：标题块与负责人行不重叠', layCompact.subjectTop + '+' + layCompact.subjectHeight + '<' + layCompact.ownerY)
+  const layDense = u.flowNodeLayout(60)
+  ok(layDense.tier === 'dense' && layDense.fontSize === 10.5 && layDense.lineHeight === 11.5, '60 卡片：密集档 10.5px / 行高 11.5', layDense.tier)
+  ok(layDense.ownerY === 55 && layDense.subjectTop + layDense.subjectHeight <= layDense.ownerY - 4, '60 卡片：标题块与负责人行留白', layDense.subjectTop + '+' + layDense.subjectHeight + ' / ' + layDense.ownerY)
+  const layTall = u.flowNodeLayout(166)
+  ok(layTall.ownerY === 126, '单图拉伸 166：负责人行上移到 76% 附近', String(layTall.ownerY))
+  ok(layTall.subjectTop === Math.round(166 / 2 - 13), '单图拉伸 166：标题块相对卡片中线居中', String(layTall.subjectTop))
+  const layoutHeights = [60, 64, 70, 80, 96, 120, 138, 166]
+  const layoutInvariant = layoutHeights.every((height) => {
+    const layout = u.flowNodeLayout(height)
+    return layout.subjectTop >= layout.headerCy + 5 &&
+      layout.subjectTop + layout.subjectHeight <= layout.ownerY - 5 &&
+      layout.ownerY + 3 <= height
+  })
+  ok(layoutInvariant, '各高度档位：标题块不压页眉、不压负责人行、不越卡片底边', String(layoutHeights.join('/')))
+  const layFallback = u.flowNodeLayout(null)
+  ok(layFallback.tier === 'normal' && layFallback.ownerY === 63, '非法高度回退到标准 70 卡片', String(layFallback.ownerY))
+
+  // ---------- 3.6 v1.2.0 流程图连线聚焦 / 流向（纯函数） ----------
+  const focusPrep = {
+    edges: [
+      { from: 'a', to: 'b', kind: 'sequence' },
+      { from: 'c', to: 'a', kind: 'blockedBy' },
+      { from: 'a', to: 'd', kind: 'relation' },
+    ],
+  }
+  ok(u.edgeKey('a', 'b') === 'a->b', 'edgeKey 生成 from->to', u.edgeKey('a', 'b'))
+  const nearA = u.relatedTaskIds(focusPrep, 'a')
+  ok(nearA.size === 4 && nearA.has('a') && nearA.has('b') && nearA.has('c') && nearA.has('d'), '点击卡片：自身 + 所有直连节点（不限方向/连线类型）', Array.from(nearA).join(','))
+  ok(u.relatedTaskIds(focusPrep, 'b').size === 2 && u.relatedTaskIds(focusPrep, 'b').has('a'), '点击卡片：仅有执行顺序相邻的节点也正确', String(u.relatedTaskIds(focusPrep, 'b').size))
+  ok(u.relatedTaskIds(focusPrep, '').size === 0 && u.relatedTaskIds(null, 'a').size === 1, '空任务 id / 空视图的聚焦集合容错')
+  const edgeFocus = u.computeFlowFocus(focusPrep, { from: 'a', to: 'b' }, 'c')
+  ok(edgeFocus && edgeFocus.mode === 'edge', '悬停连线：聚焦模式 edge（优先于选中卡片）', edgeFocus && edgeFocus.mode)
+  ok(edgeFocus.ids.size === 2 && edgeFocus.ids.has('a') && edgeFocus.ids.has('b'), '悬停连线：只聚焦连线两端节点', edgeFocus ? Array.from(edgeFocus.ids).join(',') : '')
+  ok(edgeFocus.edges.size === 1 && edgeFocus.edges.has('a->b'), '悬停连线：只保留该连线高亮', edgeFocus ? Array.from(edgeFocus.edges).join(',') : '')
+  const nodeFocus = u.computeFlowFocus(focusPrep, null, 'a')
+  ok(nodeFocus && nodeFocus.mode === 'node' && nodeFocus.ids.size === 4, '点击卡片：聚焦模式 node（自身 + 直连节点）', nodeFocus && nodeFocus.mode + '/' + nodeFocus.ids.size)
+  ok(nodeFocus.edges.size === 3, '点击卡片：两端都在聚焦集合内的连线保持高亮', String(nodeFocus.edges.size))
+  ok(u.computeFlowFocus(focusPrep, null, '') === null, '无悬停/选中 → 正常展示（null）')
+  const segFlow = api.computeFlowLayout(8)
+  const segTasks = Array.from({ length: 8 }, (_, index) => ({ id: 'seg-' + index }))
+  const segs = u.buildFlowSegments(segFlow, segTasks)
+  ok(segs.length === 7, '执行顺序分段数 = 节点数 - 1', String(segs.length))
+  ok(segs[0].from === 'seg-0' && segs[0].to === 'seg-1' && segs[0].path === 'M130,81 L358,81', '首段：相邻节点中心点连线', segs[0].path)
+  ok(segs[4].path === 'M814,201 L586,201', 'S 形第 5 段：第二行从右向左', segs[4].path)
+  ok(segs.every((seg) => typeof seg.x1 === 'number' && typeof seg.y1 === 'number' && typeof seg.x2 === 'number' && typeof seg.y2 === 'number' && seg.index >= 0), '分段携带索引与两端坐标')
+  ok(u.buildFlowSegments(segFlow, [{ id: 'only' }]).length === 0 && u.buildFlowSegments(null, segTasks).length === 0, '单任务 / 非法布局：无执行顺序分段')
+  ok(api.constants.FLOW_ANIMATE_LIMIT === 64, '流向动画任务数上限常量 = 64', String(api.constants.FLOW_ANIMATE_LIMIT))
 
   // ---------- 4. 任意时刻状态推导（phases 权威） ----------
   const b = (offset) => base + offset

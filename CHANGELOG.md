@@ -2,6 +2,30 @@
 
 本文件格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)；版本号遵循 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [1.2.0] — 2026-11-05
+
+### Added
+
+- **流程图连线流动方向**：执行轨迹改为逐段渲染（每段：底色虚线 + 分段进度实线 + 流向光点 `.tm-route-flow` + 加宽透明命中层），`stroke-dashoffset` 负向循环动画沿执行顺序流动；依赖/关系虚线曲线同样带流向动画，ready 依赖边以实线 + 箭头表示方向；≤64 任务开启动画（`FLOW_ANIMATE_LIMIT`），`prefers-reduced-motion` 下关闭（`docs/V1.2.0-FLOW-FOCUS.md`）。
+- **连线悬停聚焦**：新增 `.tm-edge-hit` / `.tm-route-hit` 加宽透明命中层；悬停任一连线（执行轨迹/依赖/关系）只聚焦该线两端节点、其余节点灰度显示、其余连线淡出，鼠标离开回退到选中聚焦。
+- **点击卡片聚焦**：点击流程图卡片聚焦显示自身 + 一跳直连节点（执行顺序/依赖/关系，双向），两端都在聚焦集合内的连线保持高亮，其余节点灰度、连线淡出；再次点击同一卡片取消聚焦。新增纯函数 `computeFlowFocus/relatedTaskIds/buildFlowSegments`。
+
+### Changed
+
+- 执行轨迹回放进度由「单条 path 整体揭示」改为「逐段揭示 + 分段轨迹头」，视觉一致且支持逐段 hover/灰显。
+- 面板提示更新为「悬停连线聚焦两端 · 点击任务查看详情」。
+
+### Fixed
+
+- **点击流程图卡片时出现的外框**（用户反馈）：该外框为 Chromium 对鼠标聚焦 SVG `<g tabindex=0>` 的 UA 默认 `outline:auto`，并非插件选中描边；CSS 改为 `.tm-node:focus{outline:none}`，键盘 `:focus-visible` 仍用卡片描边提供可见聚焦指示。
+- **ready 依赖边悬停时回退成灰色虚线**：ready 态由 class 改为 `data-tm-ready` 属性，避免 React 悬停重渲染重写 class 覆盖帧更新器状态。
+
+## [1.1.4] — 2026-11-05
+
+### Fixed
+
+- **流程图卡片标题改为最多两行**（用户反馈）：标题由单行 `truncateText(subject, 16)` 改为 `<foreignObject>` + CSS `line-clamp:2`，浏览器原生换行、超出两行省略，不再按 16 字符硬截断；新增 `flowNodeLayout(nodeHeight)` 统一卡片排版并分标准（70）/紧凑（64）/密集（60）三档字号（11.5 / 11 / 10.5px），行高/行距联动调整使流程图总高基本不变；单图拉伸模式下标题块自动居中、负责人行平滑过渡到 76% 位置。完整标题仍由 `aria-label`/tooltip/详情提供（`docs/V1.1.4-FLOW-TWO-LINE.md`）。
+
 ## [1.1.3] — 2026-11-05
 
 ### Fixed

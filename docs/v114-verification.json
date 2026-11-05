@@ -1,0 +1,93 @@
+{
+  "verifiedAt": "2026-11-05T18:36:15+08:00",
+  "pluginVersion": "1.1.4",
+  "dshVersion": "0.2.1-rc.5",
+  "client": "headless Chrome 1680x1050 @2x, both 双栏 + flow 单图两种模式逐节点断言",
+  "environment": "隔离实例 DSH_HOME=/tmp/dsh-task-map-lab, dsh web --no-open --port 8097；真实会话为 ~/.dsh 会话目录的只读副本（未写 ~/.dsh）",
+  "sessions": [
+    {
+      "slug": "baklib-feishu-sso",
+      "tier": "standard",
+      "titleFontSize": 11.5,
+      "realSessionColdRead": true,
+      "tasks": 8,
+      "flowRows": 2,
+      "viewBoxBoth": "0 0 944 262",
+      "viewBoxFlowStretched": "0 0 944 562.1469147894221",
+      "titleLineClamp": "2",
+      "titleLineHeight": 13,
+      "nodeBoxScreenPx": [
+        150.2,
+        58.4
+      ],
+      "maxVisibleTitleLines": 2
+    },
+    {
+      "slug": "p2p-athena-port",
+      "tier": "compact",
+      "titleFontSize": 11,
+      "realSessionColdRead": true,
+      "tasks": 9,
+      "flowRows": 3,
+      "viewBoxBoth": "0 0 944 324",
+      "viewBoxFlowStretched": "0 0 944 600.9794319294808",
+      "titleLineClamp": "2",
+      "titleLineHeight": 12,
+      "nodeBoxScreenPx": [
+        156.8,
+        55.7
+      ],
+      "maxVisibleTitleLines": 2
+    },
+    {
+      "slug": "synthetic-19-tasks",
+      "tier": "dense",
+      "titleFontSize": 10.5,
+      "realSessionColdRead": false,
+      "tasks": 19,
+      "flowRows": 5,
+      "viewBoxBoth": "0 0 944 468",
+      "viewBoxFlowStretched": "0 0 944 600.9794319294808",
+      "titleLineClamp": "2",
+      "titleLineHeight": 11.5,
+      "nodeBoxScreenPx": [
+        192.4,
+        64.1
+      ],
+      "maxVisibleTitleLines": 2
+    }
+  ],
+  "assertions": {
+    "allNodesClamp2": true,
+    "noSubjectOverflowX": true,
+    "noSubjectOwnerOverlap": true,
+    "subjectOwnerInNodeBox": true,
+    "noClientErrors": true,
+    "noConsoleErrors": true
+  },
+  "interaction": {
+    "hoverTooltipVisible": true,
+    "clickSelection": true,
+    "detailPanel": true,
+    "ariaLabelFullSubject": true,
+    "nativeTitleCount": 0,
+    "subjectPointerEvents": "none",
+    "darkThemeTextColor": "rgb(249, 250, 251)"
+  },
+  "screenshots": [
+    "docs/v114-flow-two-line.png",
+    "docs/v114-flow-max.png",
+    "docs/v114-flow-dense.png",
+    "docs/v114-flow-dark.png"
+  ],
+  "tests": {
+    "derive": 307,
+    "hostSmoke": 35,
+    "clientSmoke": 678,
+    "clientLogic": 342
+  },
+  "limitations": [
+    "dense 档（5+ 行 / 17+ 任务）没有真实会话样本，用隔离实例「注入投影缓存」的 19 任务合成视图验证排版；只验证渲染，不代表真实数据链路。",
+    "常规/紧凑两档为真实会话副本冷读。"
+  ]
+}
