@@ -128,7 +128,7 @@ const plugin = captured.factory((id) => {
 const api = plugin.__test
 ok(plugin && typeof plugin.apply === 'function', 'plugin exports apply()')
 ok(Array.isArray(plugin.inject) && plugin.inject.includes('slots'), 'plugin injects slots')
-ok(api && api.version === '1.1.2', 'client version marker = 1.1.2', api && api.version)
+ok(api && api.version === '1.1.3', 'client version marker = 1.1.3', api && api.version)
 
 const registered = []
 const injections = []
@@ -145,10 +145,10 @@ plugin.apply(ctx)
 ok(window.__TASK_MAP_M0__ && window.__TASK_MAP_M0__.loaded === true, 'window.__TASK_MAP_M0__ 兼容标记')
 ok(Array.isArray(window.__TASK_MAP_M0__.slots) && window.__TASK_MAP_M0__.slots.length === 3, 'M0 标记 slots = 3')
 ok(window.__TASK_MAP_M2__ && window.__TASK_MAP_M2__.loaded === true, 'window.__TASK_MAP_M2__ loaded')
-ok(window.__TASK_MAP_M2__.version === '1.1.2', '客户端版本标记 1.1.2', window.__TASK_MAP_M2__.version)
+ok(window.__TASK_MAP_M2__.version === '1.1.3', '客户端版本标记 1.1.3', window.__TASK_MAP_M2__.version)
 ok(Array.isArray(window.__TASK_MAP_M2__.errors), 'M2 errors 数组')
 ok(attrs['data-task-map-plugin'] === 'm2', 'html marker data-task-map-plugin=m2', attrs['data-task-map-plugin'])
-ok(attrs['data-task-map-client-version'] === '1.1.2', 'html marker client version', attrs['data-task-map-client-version'])
+ok(attrs['data-task-map-client-version'] === '1.1.3', 'html marker client version', attrs['data-task-map-client-version'])
 ok(injections.includes('main') && injections.includes('sidebar.panellist') && injections.includes('conversation.view'), 'slot injections requested', injections.join(','))
 ok(registered.length === 3, '三个 slot 注册', String(registered.length))
 const byName = Object.fromEntries(registered.map((entry) => [entry.options.name, entry]))
@@ -660,7 +660,7 @@ const highlightedRow = findAll(highlightGantt, (node) => node.props && node.prop
 ok(highlightedRow.props['data-tm-child-highlight'] === 'true', '甘特高亮子行 data-tm-child-highlight=true')
 
 // ==================================================================
-console.log('\n[client-smoke] v1.1.2 单图模式：flow/gantt/restore+both、折叠保留 DOM、aria、状态不丢')
+console.log('\n[client-smoke] v1.1.3 单图模式：flow/gantt/restore+both、折叠保留 DOM、aria、状态不丢')
 // ==================================================================
 ok(sessionTree.props['data-tm-layout-mode'] === 'both', '默认布局 data-tm-layout-mode=both')
 const bothFlowPanel = findOne(sessionTree, (node) => node.props && node.props['data-tm-panel'] === 'flow')

@@ -8,7 +8,7 @@
  *   3) 插件 HTTP 路由：/task-map/api/health（M5 前必须补同源校验，当前仅非敏感状态）。
  *
  * 投影纪律（见 M0-SPIKE.md §5.2）：apply 同步、无关事件返回同一引用、
- * 形状变化升 stateVersion（当前 3）、wire.view 结果保持 UI 量级。
+ * 形状变化升 stateVersion（当前 4）、wire.view 结果保持 UI 量级。
  */
 import { STATE_VERSION, buildClientView, emptyState, foldEvent } from './lib/derive.js'
 
@@ -17,7 +17,7 @@ export const inject = []
 
 const ROUTE = '/task-map/api/health'
 const KEY = 'taskMap'
-const VERSION = '1.1.2'
+const VERSION = '1.1.3'
 
 const status = {
   startedAt: Date.now(),
@@ -27,6 +27,23 @@ const status = {
   toolErrors: [],
   route: false,
   routeError: null,
+}
+
+// 幂等挂载：DSH 在启用/禁用/热更新时可能对同一模块重复 apply；
+// 每次 apply 前先释放上一次的投影/工具/路由注册，避免重复注册（工具列表重复、路由冲突）。
+const mountDisposers = []
+function resetMounts() {
+  const list = mountDisposers.splice(0)
+  for (const dispose of list.reverse()) {
+    try {
+      if (typeof dispose === 'function') dispose()
+    } catch (error) {
+      log(`mount reset dispose failed: ${errorText(error)}`)
+    }
+  }
+  status.projection = false
+  status.route = false
+  status.tools = []
 }
 
 function log(message) {
@@ -70,7 +87,7 @@ function registerProjection(ctx) {
       const dispose = registry.register(definition)
       status.projection = true
       log(`projection "${KEY}" registered`)
-      projectionCtx.effect(() => () => {
+      const effectDispose = projectionCtx.effect(() => () => {
         status.projection = false
         try {
           if (typeof dispose === 'function') dispose()
@@ -78,6 +95,7 @@ function registerProjection(ctx) {
           log(`projection dispose failed: ${errorText(error)}`)
         }
       })
+      mountDisposers.push(effectDispose)
     } catch (error) {
       status.projectionError = errorText(error)
       log(`projection registration failed: ${status.projectionError}`)
@@ -243,8 +261,10 @@ function registerTools(ctx) {
       },
     ]
     for (const definition of definitions) {
+      if (status.tools.includes(definition.name)) continue
       try {
-        toolCtx.effect(() => toolCtx.tools.register(definition), `task-map:${definition.name}`)
+        const effectDispose = toolCtx.effect(() => toolCtx.tools.register(definition), `task-map:${definition.name}`)
+        mountDisposers.push(effectDispose)
         status.tools.push(definition.name)
         log(`tool "${definition.name}" registered`)
       } catch (error) {
@@ -304,7 +324,7 @@ function registerRoute(ctx) {
       })
       status.route = true
       log(`route "${ROUTE}" registered`)
-      webCtx.effect(() => () => {
+      const effectDispose = webCtx.effect(() => () => {
         status.route = false
         try {
           if (typeof dispose === 'function') dispose()
@@ -312,6 +332,7 @@ function registerRoute(ctx) {
           log(`route dispose failed: ${errorText(error)}`)
         }
       })
+      mountDisposers.push(effectDispose)
     } catch (error) {
       status.routeError = errorText(error)
       log(`route registration failed: ${status.routeError}`)
@@ -321,6 +342,9 @@ function registerRoute(ctx) {
 
 export function apply(ctx) {
   log(`host applying (${VERSION})`)
+  // 同一模块可能被重复 apply（启用/禁用/热更新），先清理上一次挂载，保证幂等。
+  resetMounts()
+  status.toolErrors = []
   registerProjection(ctx)
   registerTools(ctx)
   registerRoute(ctx)

@@ -85,7 +85,7 @@ export function runLogicTests(api, ok) {
   ok(u.fmtClock(65432) === '01:05', 'fmtClock(65432) = 01:05', u.fmtClock(65432))
   ok(u.fmtClock(3725000) === '1:02:05', 'fmtClock(3725000) = 1:02:05', u.fmtClock(3725000))
   ok(u.truncateText('abcdefghij', 5) === 'abcd…', 'truncateText 截断加省略号', u.truncateText('abcdefghij', 5))
-  ok(u.shortPath('~/Codes/a') === '~/Codes/a', 'shortPath 压缩 home', u.shortPath('~/Codes/a'))
+  ok(u.shortPath('/Users/xiaohui/Codes/a') === '~/Codes/a', 'shortPath 压缩 home', u.shortPath('/Users/xiaohui/Codes/a'))
 
   // ---------- 2. 负责人稳定配色 ----------
   ok(u.ownerColorFor('Lead') === '#f59e0b', 'Lead 固定色')
@@ -750,7 +750,7 @@ export function runLogicTests(api, ok) {
   // 甘特高亮的 DOM 路径由开发期临时 jsdom+React harness 验证（不随仓库提交），此处仅断言纯函数可用。
   ok(typeof api.timeline.ganttTaskGeometry === 'function', '甘特几何纯函数可用（DOM 高亮路径由临时浏览器/jsdom harness 验证，不随仓库）')
 
-  // ---------- 8.14 v1.1.2 单图模式：布局纯函数 + 甘特行距放大 ----------
+  // ---------- 8.14 v1.1.3 单图模式：布局纯函数 + 甘特行距放大 ----------
   ok(api.constants.LAYOUT_MODES.length === 3 && api.constants.LAYOUT_MODES.indexOf('flow') >= 0, 'LAYOUT_MODES = both/flow/gantt')
   ok(u.normalizeLayoutMode('flow') === 'flow' && u.normalizeLayoutMode('gantt') === 'gantt' && u.normalizeLayoutMode('both') === 'both', 'normalizeLayoutMode 合法值')
   ok(u.normalizeLayoutMode('FLOW') === 'both' && u.normalizeLayoutMode(null) === 'both' && u.normalizeLayoutMode('x') === 'both', 'normalizeLayoutMode 非法值回退 both')

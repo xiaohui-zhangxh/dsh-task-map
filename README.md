@@ -1,6 +1,6 @@
 # DSH Task Map（任务地图）
 
-![Version](https://img.shields.io/badge/version-1.1.2-blue)
+![Version](https://img.shields.io/badge/version-1.1.3-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![DSH](https://img.shields.io/badge/DeepSeek%20Harness-%3E%3D0.2.1--rc.5-6b4cff)
 
@@ -98,7 +98,7 @@ node test/client-logic.test.mjs# 客户端纯逻辑（329 checks）
 
 ## 版本与已知限制
 
-- 当前版本 **1.1.2**（MVP 1.0.0 + 布局/计划/清理修复），完整变更见 [CHANGELOG.md](CHANGELOG.md)；
+- 当前版本 **1.1.3**（MVP 1.0.0 + 布局/计划/清理修复），完整变更见 [CHANGELOG.md](CHANGELOG.md)；
 - 已知限制：
   - 「对话建任务 → 面板实时出现」未在隔离 web profile 端到端（无 Agent Teams）；关系工具已用真实模型调用验证；
   - 超长会话（>~60 任务）视图自动降级，详情「共 N 条」为累计口径；

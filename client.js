@@ -31,13 +31,15 @@ window.__ModuleLoader__.load({
     const React = require('react')
     const h = React.createElement
     const PLUGIN_ID = '@local/dsh-task-map'
-    const CLIENT_VERSION = '1.1.2'
+    const CLIENT_VERSION = '1.1.3'
     const CLIENT_SCHEMA = 'task-map/client'
     const STYLE_ID = 'task-map-m2-style'
     const SESSION_SLOT_ORDER = 11
     const memo = typeof React.memo === 'function' ? React.memo : (component) => component
     const errors = []
     const registered = []
+    // 同一 slot 只保留最后一次注册（插件重复 apply / 重新启用时先释放旧的，避免重复注册）。
+    const slotDisposers = new Map()
 
     // ------------------------------------------------------------------
     // 标记 / 错误记录
@@ -4791,6 +4793,12 @@ window.__ModuleLoader__.load({
         recordError('cleanup', error)
       }
       try {
+        for (const dispose of Array.from(slotDisposers.values())) {
+          try { dispose() } catch (ignored) { /* noop */ }
+        }
+        slotDisposers.clear()
+      } catch (ignored) { /* noop */ }
+      try {
         if (typeof window !== 'undefined') {
           if (window.__TASK_MAP_M2__) delete window.__TASK_MAP_M2__
           if (window.__TASK_MAP_M0__) delete window.__TASK_MAP_M0__
@@ -4802,9 +4810,17 @@ window.__ModuleLoader__.load({
       try {
         ctx.slots.inject(slotName, () => {
           try {
+            const previous = slotDisposers.get(slotName)
+            if (typeof previous === 'function') {
+              try { previous() } catch (ignored) { /* noop */ }
+            }
             const dispose = ctx.slots.register(options, Component)
-            registered.push(slotName)
-            return dispose
+            slotDisposers.set(slotName, dispose)
+            if (!registered.includes(slotName)) registered.push(slotName)
+            return () => {
+              try { dispose() } catch (ignored) { /* noop */ }
+              if (slotDisposers.get(slotName) === dispose) slotDisposers.delete(slotName)
+            }
           } catch (error) {
             recordError(slotName, error)
             return () => {}

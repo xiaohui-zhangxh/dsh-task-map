@@ -2,6 +2,12 @@
 
 本文件格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)；版本号遵循 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [1.1.3] — 2026-11-05
+
+### Fixed
+
+- **重复启用/热更新后的插件 UI 消失**：`apply` 每次执行前先释放上一轮投影/工具/路由挂载（host 幂等），客户端 slot 注册按名称去重并释放旧注册；修复「关闭→启用」循环中工具重复注册（2→4→6）与会话页签不再出现的问题（`docs/V1.1.3-IDEMPOTENT.md`）。
+
 ## [1.1.2] — 2026-11-05
 
 ### Fixed
