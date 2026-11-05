@@ -1,0 +1,5 @@
+# DSH Task Map — host loader row (M0 spike)
+- insert:
+    - id: task-map
+      name: '@local/dsh-task-map'
+      config: {}

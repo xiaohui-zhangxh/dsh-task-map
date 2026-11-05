@@ -1,0 +1,28 @@
+{
+  "checks": 25,
+  "failures": 0,
+  "errors": [],
+  "last": {
+    "mode": "flow",
+    "display": "block",
+    "overflow": "hidden",
+    "scrollTop": 0,
+    "scrollH": 998,
+    "headBottom": 186,
+    "svgTop": 188,
+    "svgBottom": 1179,
+    "panelTop": 139,
+    "panelBottom": 1212,
+    "nodeTop": 280,
+    "nodeBottom": 1127,
+    "rootH": 1194,
+    "hostH": 1364,
+    "vw": 2560,
+    "vh": 1440
+  },
+  "scenario": "flow 单图顶部裁切修复回归：小窗口 1200x760 放大→resize 2560x1440、12 尺寸矩阵、恢复/再放大",
+  "screenshots": [
+    "docs/v102-flow-max.png",
+    "docs/v102-flow-small.png"
+  ]
+}

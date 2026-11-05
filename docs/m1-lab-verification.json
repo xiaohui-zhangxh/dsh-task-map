@@ -1,0 +1,44 @@
+{
+  "verifiedAt": "2026-11-04T19:33:43.155Z",
+  "instance": "http://127.0.0.1:8088/?token=***",
+  "sessions": {
+    "baklib-feishu-sso": {
+      "sessionId": "session-a1c3d78d-eaa0-405e-807d-3c037524a987",
+      "tasks": 8,
+      "asOfSeq": 1156,
+      "completed": 8,
+      "inProgress": 0,
+      "queueMs": 2354635,
+      "taskExecMs": 4823466,
+      "waitAgentMs": 824680,
+      "viewBytes": 52175
+    },
+    "p2p-athena-port": {
+      "sessionId": "session-886d1772-1e3c-4283-8703-58d74949bf8a",
+      "tasks": 9,
+      "asOfSeq": 1781,
+      "completed": 9,
+      "inProgress": 0,
+      "queueMs": 334297,
+      "taskExecMs": 7078754,
+      "waitAgentMs": 2298402,
+      "viewBytes": 62769
+    },
+    "athena-plan-board": {
+      "sessionId": "session-7959b49b-7cde-41fa-8cf1-8156e91ae060",
+      "tasks": 6,
+      "asOfSeq": 1006,
+      "completed": 6,
+      "inProgress": 0,
+      "queueMs": 1121170,
+      "taskExecMs": 4280334,
+      "waitAgentMs": 1394517,
+      "viewBytes": 40711
+    }
+  },
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "checks": 21,
+  "failures": 0,
+  "plan": {
+    "session": "session-a61046cb-84c3-42db-a55a-341bd81330c1",
+    "tasks": 5,
+    "plan": {
+      "visible": true,
+      "items": 7,
+      "itemTexts": [
+        {
+          "text": "✓ 盘点 contracts 现状：文件清单、依赖图、根 index 导出面、消费点 10:45",
+          "status": "completed"
+        },
+        {
+          "text": "● 定义目标领域目录树与旧→新映射（含测试/fixture） 10:45",
+          "status": "in_progress"
+        },
+        {
+          "text": "○ 写迁移脚本：git mv、import 改写、模块 index 生成、根 inde… 10:45",
+          "status": "pending"
+        },
+        {
+          "text": "○ 同步 scripts/ 与 docs 中的硬编码路径，修 gate 测试扫描逻辑 10:45",
+          "status": "pending"
+        },
+        {
+          "text": "○ 跑一批验证：contracts 测试、typecheck:affected、结构门… 10:45",
+          "status": "pending"
+        },
+        {
+          "text": "○ 写 task.md 规格（tmp/tasks）与迁移报告 10:45",
+          "status": "pending"
+        },
+        {
+          "text": "○ 等 spec 技能文档 + 独立验收结果，收口并汇报（含其它包滚动计划） 10:45",
+          "status": "pending"
+        }
+      ],
+      "countsText": "会话计划（todo）1 次计划更新 已完成 1 进行中 1 待处理 5 ✓ 盘点 contracts 现状：文件清单、依赖图、根 index 导出面、消费点 10:45 ● 定义目标领域目录树与旧→新映射（含测试/fixture） 10:45 ○ 写迁移脚本：git mv、import 改写、模块 index 生成、根 inde… 10:45 ○ 同步 scripts/ 与 docs 中的硬编码路径，修 gate 测试扫描逻辑 10:45 ○ 跑一批验证：contracts 测试、typecheck:affected、结构门… 10:45 ○ 写 task.md 规格（tmp/tasks）与迁移报告 10:45 ○ 等 spec 技能文档 + 独立验收结果，收口并汇报（含其它包滚动计划） 10:45 计划来自会话 todo；执行任务见左侧任务图。 计划状态：已完成 盘点 contracts 现状：文件清单、依赖图、根 index 导出面、消费点；进行中 定义目标领域目录树与旧→新映射（含测试/fixture）；待处理 写迁移脚本：git mv、import 改写、模块 index 生成、根 index 重生成、exports 更新；待处理 同步 scripts/ 与 docs 中的硬编码路径，修 gate 测试扫描逻辑；待处理 跑一批验证：contracts 测试、typecheck:affected、结构门禁、深路径冒烟；待处理 写 task.md 规格（tmp/tasks）与迁移报告；待处理 等 spec 技能文档 + 独立验收结果，收口并汇报（含其它包滚动计划）",
+      "active": ""
+    },
+    "counts": {
+      "completed": 1,
+      "inProgress": 1,
+      "pending": 5
+    }
+  },
+  "tooltip": {
+    "node": {
+      "x": 509,
+      "y": 251,
+      "left": 432,
+      "top": 224,
+      "w": 155,
+      "h": 53
+    },
+    "tooltip": {
+      "visible": true,
+      "left": 523,
+      "top": 238,
+      "width": 323,
+      "height": 98,
+      "text": "task-1 · 定义 athena 包目录结构规范（禁止清单 + 技能） 负责人 layout-spec · 开始第 1 / 完成第 1 创建 10:45 · 开始 10:45 · 完成 10:56 执行耗时 10 分 · 排队 28 秒"
+    }
+  },
+  "consoleErrors": [],
+  "baklib": {
+    "tasks": 8,
+    "planVisible": true,
+    "planItems": 10,
+    "countsText": "会话计划（todo）3 次计划更新 已完成 10 进行中 0 待处理 0 ✓ 创建分支 feat/feishu-sso、写实施契约、建任务板并 spawn 团队"
+  }
+}

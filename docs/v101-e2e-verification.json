@@ -1,0 +1,30 @@
+{
+  "createdAt": "2026-11-05T02:58:49.592Z",
+  "checks": 31,
+  "failed": 0,
+  "modes": {
+    "both": {
+      "flowHeight": 295,
+      "ganttHeight": 432,
+      "currentTime": 1793808894961
+    },
+    "flow": {
+      "flowHeight": 683,
+      "ganttCollapsed": true,
+      "mode": "flow"
+    },
+    "gantt": {
+      "ganttHeight": 683,
+      "flowCollapsed": true,
+      "mode": "gantt"
+    },
+    "bigscreen": {
+      "viewport": "2560x1440",
+      "ganttHeight": 1073,
+      "mode": "gantt",
+      "rootHeight": 1194,
+      "hostHeight": 1364
+    }
+  },
+  "consoleErrors": []
+}

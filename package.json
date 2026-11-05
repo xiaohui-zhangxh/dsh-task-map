@@ -1,0 +1,59 @@
+{
+  "name": "@local/dsh-task-map",
+  "version": "1.1.2",
+  "private": true,
+  "type": "module",
+  "description": "DSH Task Map: per-session task map for DeepSeek Harness — SVG task flow, Gantt timeline, replay, wait analysis, change stream and task relations.",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "lib/",
+    "cordis.patch.yml",
+    "locale/*.json"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true
+    }
+  },
+  "engines": {
+    "dsh": ">=0.2.1-rc.5 <0.3.0"
+  },
+  "license": "MIT",
+  "scripts": {
+    "test": "node test/derive.test.mjs && node test/host-smoke.mjs && node test/client-smoke.mjs && node test/client-logic.test.mjs",
+    "test:derive": "node test/derive.test.mjs",
+    "test:client": "node test/client-smoke.mjs && node test/client-logic.test.mjs",
+    "install:desktop": "bash scripts/install.sh",
+    "uninstall:desktop": "bash scripts/uninstall.sh",
+    "fixtures": "node tools/make-fixtures.mjs && python3 tools/handcalc.py"
+  },
+  "author": "xiaohui-zhangxh",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiaohui-zhangxh/dsh-task-map.git"
+  },
+  "homepage": "https://github.com/xiaohui-zhangxh/dsh-task-map#readme",
+  "bugs": {
+    "url": "https://github.com/xiaohui-zhangxh/dsh-task-map/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "task-map",
+    "gantt",
+    "replay",
+    "agent-teams",
+    "observability"
+  ]
+}

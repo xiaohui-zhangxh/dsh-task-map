@@ -1,0 +1,33 @@
+{
+  "verifiedAt": "2026-11-04T19:36:30.277Z",
+  "sessionStarted": true,
+  "sessionId": "session-1240d391-5611-432a-b5ac-b0a2e41df14b",
+  "hasView": true,
+  "hasTeamBoard": false,
+  "dataSource": "none",
+  "asOfSeq": 27,
+  "tasks": [],
+  "counters": {
+    "toolCalls": 0,
+    "jobs": 0,
+    "approvals": 0,
+    "subagents": 0,
+    "todoWrites": 0,
+    "teammates": 0,
+    "waitAgents": 0,
+    "askUsers": 0,
+    "steps": 1,
+    "stepEnds": 1,
+    "goalChanges": 0,
+    "commands": 0,
+    "deliverables": 0
+  },
+  "turns": [
+    {
+      "turn": 1,
+      "start": 1793820973260,
+      "end": 1793820977699
+    }
+  ],
+  "consoleErrors": []
+}

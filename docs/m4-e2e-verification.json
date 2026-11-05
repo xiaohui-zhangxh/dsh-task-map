@@ -1,0 +1,109 @@
+{
+  "verifiedAt": "2026-11-05T02:08:54.901Z",
+  "instance": "http://127.0.0.1:8089/?token=***",
+  "synthetic": {
+    "base": {
+      "tasks": 8,
+      "relationCount": 2
+    },
+    "split": {
+      "injected": {
+        "parent": "task-1",
+        "child": "task-8",
+        "at": 1793844510520
+      },
+      "relationBadges": [
+        {
+          "count": "1",
+          "task": "task-1"
+        },
+        {
+          "count": "1",
+          "task": "task-1"
+        }
+      ],
+      "childOf": [
+        {
+          "id": "task-8",
+          "parent": "task-1"
+        },
+        {
+          "id": "",
+          "parent": "task-1"
+        },
+        {
+          "id": "",
+          "parent": "task-1"
+        },
+        {
+          "id": "",
+          "parent": "task-1"
+        }
+      ]
+    },
+    "parentHint": {
+      "alerts": [
+        "父任务已完成，1 个子任务未完成（仅提示，不改任务状态）"
+      ]
+    },
+    "invalid": {
+      "invalidTexts": [
+        "关系记录引用了不存在的任务：task-404（已忽略，不影响任务状态）"
+      ]
+    }
+  },
+  "realTool": {
+    "sent": true,
+    "evidence": [
+      {
+        "seq": 1170,
+        "time": 1793844508471,
+        "callId": "call_00_NpthPFAQxrQmWyZsqw8b7128",
+        "args": "{\"parent_task\": \"task-1\", \"children\": [\"task-8\"], \"kind\": \"split\", \"note\": \"M4 E2E 合法示例\"}",
+        "result": {
+          "seq": 1171,
+          "time": 1793844508481,
+          "isError": false,
+          "text": "Recorded split: task-1 → task-8（只记录，不调度）"
+        }
+      },
+      {
+        "seq": 1172,
+        "time": 1793844508482,
+        "callId": "call_01_2wDplR7PqT9TDGzVfcer1381",
+        "args": "{\"parent_task\": \"task-1\", \"children\": [\"task-404\"], \"kind\": \"split\", \"note\": \"M4 E2E 非法示例\"}",
+        "result": {
+          "seq": 1173,
+          "time": 1793844508489,
+          "isError": false,
+          "text": "Relation not recorded: 任务不存在于本会话任务板：task-404"
+        }
+      },
+      {
+        "seq": 1187,
+        "time": 1793844547630,
+        "callId": "call_00_sWUT4Ooo4fq2V2d53OPR2387",
+        "args": "{\"children\": [\"task-8\"], \"kind\": \"split\", \"note\": \"M4 E2E 合法示例\", \"parent_task\": \"task-1\"}",
+        "result": {
+          "seq": 1188,
+          "time": 1793844547642,
+          "isError": false,
+          "text": "Recorded split: task-1 → task-8（只记录，不调度）"
+        }
+      },
+      {
+        "seq": 1189,
+        "time": 1793844547643,
+        "callId": "call_01_279LkpGCYyUnS2aKoSAC4175",
+        "args": "{\"children\": [\"task-404\"], \"kind\": \"split\", \"note\": \"M4 E2E 非法示例\", \"parent_task\": \"task-1\"}",
+        "result": {
+          "seq": 1190,
+          "time": 1793844547649,
+          "isError": false,
+          "text": "Relation not recorded: 任务不存在于本会话任务板：task-404"
+        }
+      }
+    ]
+  },
+  "consoleErrors": []
+}

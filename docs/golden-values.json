@@ -1,0 +1,1140 @@
+{
+  "format": 1,
+  "sessions": {
+    "athena-plan-board": {
+      "agents": {
+        "2bb670f6-a068-4561-be18-6b0a5aade7ab": "tech-architect",
+        "37089fde-cb73-48e1-8672-6ece6e1825ff": "delivery-planner",
+        "39cfc77c-70ad-4209-a569-90cfaf1d67e2": "researcher",
+        "7751826e-2ff2-454d-9aa7-1ecfeaa65d5b": "dev-planner",
+        "9472d43d-ff89-40f1-84f6-273d1916029f": "reviewer",
+        "eea1d295-244d-490a-85c0-b330c7e95ba4": "ai-architect",
+        "f59b7b3c-36e9-45a9-9a63-9ade48d5114d": "product-designer"
+      },
+      "counters": {
+        "approvals": 0,
+        "askUsers": 0,
+        "jobs": 84,
+        "subagents": 6,
+        "teammates": 8,
+        "todoWrites": 0,
+        "toolCalls": 146,
+        "waitAgents": 16
+      },
+      "cwd": "/workspace/hermes-workspaces",
+      "leadSessionId": "session-7959b49b-7cde-41fa-8cf1-8156e91ae060",
+      "order": [
+        "task-1",
+        "task-2",
+        "task-3",
+        "task-4",
+        "task-5",
+        "task-6"
+      ],
+      "relations": [],
+      "sessionCreatedAt": 1793813181495,
+      "sessionId": "session-7959b49b-7cde-41fa-8cf1-8156e91ae060",
+      "slug": "athena-plan-board",
+      "spans": {
+        "approval": 0,
+        "errorCount": 3,
+        "job": 84,
+        "killedCount": 0,
+        "openCount": 0,
+        "tool": 146
+      },
+      "taskCount": 6,
+      "taskStats": {
+        "completed": 6,
+        "failed": 0,
+        "in_progress": 0,
+        "pending": 0,
+        "total": 6
+      },
+      "tasks": {
+        "task-1": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793811116453,
+          "createdAt": 1793810549300,
+          "doneRank": 1,
+          "execMs": 398948,
+          "owner": "product-designer",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793810549300,
+              "status": "pending"
+            },
+            {
+              "at": 1793810717505,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793811116453,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 168205,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 2,
+          "startedAt": 1793810717505,
+          "status": "completed",
+          "updatedAt": 1793811116453
+        },
+        "task-2": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793811413397,
+          "createdAt": 1793810549313,
+          "doneRank": 3,
+          "execMs": 694471,
+          "owner": "tech-architect",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793810549313,
+              "status": "pending"
+            },
+            {
+              "at": 1793810718926,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793811413397,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 169613,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 4,
+          "startedAt": 1793810718926,
+          "status": "completed",
+          "updatedAt": 1793811413397
+        },
+        "task-3": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793811637503,
+          "createdAt": 1793810549325,
+          "doneRank": 4,
+          "execMs": 919596,
+          "owner": "ai-architect",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793810549325,
+              "status": "pending"
+            },
+            {
+              "at": 1793810717907,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793811637503,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 168582,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 3,
+          "startedAt": 1793810717907,
+          "status": "completed",
+          "updatedAt": 1793811637503
+        },
+        "task-4": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793811891157,
+          "createdAt": 1793810549337,
+          "doneRank": 5,
+          "execMs": 751141,
+          "owner": "delivery-planner",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793810549337,
+              "status": "pending"
+            },
+            {
+              "at": 1793811140016,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793811891157,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 590679,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 5,
+          "startedAt": 1793811140016,
+          "status": "completed",
+          "updatedAt": 1793811891157
+        },
+        "task-5": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793811361817,
+          "createdAt": 1793810549348,
+          "doneRank": 2,
+          "execMs": 801357,
+          "owner": "researcher",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793810549348,
+              "status": "pending"
+            },
+            {
+              "at": 1793810560460,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793811361817,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 11112,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 1,
+          "startedAt": 1793810560460,
+          "status": "completed",
+          "updatedAt": 1793811361817
+        },
+        "task-6": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793812099919,
+          "createdAt": 1793811372119,
+          "doneRank": 6,
+          "execMs": 714821,
+          "owner": "reviewer",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793811372119,
+              "status": "pending"
+            },
+            {
+              "at": 1793811385098,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793812099919,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 12979,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 6,
+          "startedAt": 1793811385098,
+          "status": "completed",
+          "updatedAt": 1793812099919
+        }
+      },
+      "title": "# Athena 重构 分析 - 衍生项目计划看板",
+      "turns": [
+        {
+          "end": 1793812528295,
+          "start": 1793810366355,
+          "turn": 1
+        },
+        {
+          "end": 1793813249656,
+          "start": 1793813224948,
+          "turn": 2
+        }
+      ],
+      "usage": {
+        "cacheRead": 19708416,
+        "cacheWrite": 0,
+        "input": 191564,
+        "output": 120812,
+        "total": 20020792
+      },
+      "waits": {
+        "approvalMs": 0,
+        "askUserMs": 0,
+        "blockedMs": 0,
+        "handoffs": [
+          {
+            "from": "task-5",
+            "gapMs": 23281,
+            "to": "task-6"
+          },
+          {
+            "from": "task-1",
+            "gapMs": 23563,
+            "to": "task-4"
+          }
+        ],
+        "humanIdleMs": 696653,
+        "idleSegments": [
+          {
+            "afterTurn": 1,
+            "end": 1793813224948,
+            "ms": 696653,
+            "start": 1793812528295
+          }
+        ],
+        "maxHandoffMs": 23563,
+        "preTurnMs": -2815140,
+        "preTurnRestored": true,
+        "queueMs": 1121170,
+        "readyDelayMs": 0,
+        "taskExecMs": 4280334,
+        "waitAgentMs": 1394517,
+        "wallClockMs": 68161
+      }
+    },
+    "baklib-feishu-sso": {
+      "agents": {
+        "0fef5c4b-9a45-4154-8fbf-9ec3e6a620fc": "feishu-service",
+        "6b4d2c0b-e44e-4b03-9c97-f6e700cf35a5": "docs-qa",
+        "a0905951-22c6-4bbc-b8aa-686dacd5bb4e": "contact-import",
+        "b6b76d98-08e2-4dd0-8429-cfaa5eb35db1": "feishu-events",
+        "baa4b949-18af-4f50-b3de-c07c37e810c2": "qa-verifier",
+        "eb2c738e-80c3-4dab-861d-717b140a9a50": "auth-ui"
+      },
+      "counters": {
+        "approvals": 1,
+        "askUsers": 2,
+        "jobs": 109,
+        "subagents": 5,
+        "teammates": 7,
+        "todoWrites": 3,
+        "toolCalls": 203,
+        "waitAgents": 8
+      },
+      "cwd": "/workspace/baklib",
+      "leadSessionId": "session-a1c3d78d-eaa0-405e-807d-3c037524a987",
+      "order": [
+        "task-1",
+        "task-2",
+        "task-3",
+        "task-4",
+        "task-5",
+        "task-6",
+        "task-7",
+        "task-8"
+      ],
+      "relations": [],
+      "sessionCreatedAt": 1793803664622,
+      "sessionId": "session-a1c3d78d-eaa0-405e-807d-3c037524a987",
+      "slug": "baklib-feishu-sso",
+      "spans": {
+        "approval": 1,
+        "errorCount": 3,
+        "job": 109,
+        "killedCount": 0,
+        "openCount": 0,
+        "tool": 203
+      },
+      "taskCount": 8,
+      "taskStats": {
+        "completed": 8,
+        "failed": 0,
+        "in_progress": 0,
+        "pending": 0,
+        "total": 8
+      },
+      "tasks": {
+        "task-1": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793807476974,
+          "createdAt": 1793806924074,
+          "doneRank": 1,
+          "execMs": 513572,
+          "owner": "Lead",
+          "ownerIsLead": true,
+          "phases": [
+            {
+              "at": 1793806924074,
+              "status": "pending"
+            },
+            {
+              "at": 1793806963402,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793807476974,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 39328,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 1,
+          "startedAt": 1793806963402,
+          "status": "completed",
+          "updatedAt": 1793807476974
+        },
+        "task-2": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793807662922,
+          "createdAt": 1793806924086,
+          "doneRank": 4,
+          "execMs": 693849,
+          "owner": "auth-ui",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793806924086,
+              "status": "pending"
+            },
+            {
+              "at": 1793806969073,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793807662922,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 44987,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 4,
+          "startedAt": 1793806969073,
+          "status": "completed",
+          "updatedAt": 1793807662922
+        },
+        "task-3": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793807636289,
+          "createdAt": 1793806924097,
+          "doneRank": 2,
+          "execMs": 669213,
+          "owner": "feishu-service",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793806924097,
+              "status": "pending"
+            },
+            {
+              "at": 1793806967076,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793807636289,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 42979,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 2,
+          "startedAt": 1793806967076,
+          "status": "completed",
+          "updatedAt": 1793807636289
+        },
+        "task-4": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793807855757,
+          "createdAt": 1793806924109,
+          "doneRank": 5,
+          "execMs": 888255,
+          "owner": "contact-import",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793806924109,
+              "status": "pending"
+            },
+            {
+              "at": 1793806967502,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793807855757,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 43393,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 3,
+          "startedAt": 1793806967502,
+          "status": "completed",
+          "updatedAt": 1793807855757
+        },
+        "task-5": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793808275276,
+          "createdAt": 1793806924120,
+          "doneRank": 7,
+          "execMs": 1304812,
+          "owner": "feishu-events",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793806924120,
+              "status": "pending"
+            },
+            {
+              "at": 1793806970464,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793808275276,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 46344,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 5,
+          "startedAt": 1793806970464,
+          "status": "completed",
+          "updatedAt": 1793808275276
+        },
+        "task-6": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793807659818,
+          "createdAt": 1793806924132,
+          "doneRank": 3,
+          "execMs": 7294,
+          "owner": "Lead",
+          "ownerIsLead": true,
+          "phases": [
+            {
+              "at": 1793806924132,
+              "status": "pending"
+            },
+            {
+              "at": 1793807652524,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793807659818,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 728392,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 6,
+          "startedAt": 1793807652524,
+          "status": "completed",
+          "updatedAt": 1793807659818
+        },
+        "task-7": {
+          "blockedBy": [
+            "task-1",
+            "task-2",
+            "task-3",
+            "task-4",
+            "task-5",
+            "task-6"
+          ],
+          "blockedWaitMs": 1351134,
+          "completedAt": 1793808620749,
+          "createdAt": 1793806924142,
+          "doneRank": 8,
+          "execMs": 308774,
+          "owner": "qa-verifier",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793806924142,
+              "status": "pending"
+            },
+            {
+              "at": 1793808311975,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793808620749,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 1387833,
+          "readyAt": 1793808275276,
+          "readyDelayMs": 36699,
+          "startRank": 8,
+          "startedAt": 1793808311975,
+          "status": "completed",
+          "updatedAt": 1793808620749
+        },
+        "task-8": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793808125054,
+          "createdAt": 1793807665978,
+          "doneRank": 6,
+          "execMs": 437697,
+          "owner": "qa-verifier",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793807665978,
+              "status": "pending"
+            },
+            {
+              "at": 1793807687357,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793808125054,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 21379,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 7,
+          "startedAt": 1793807687357,
+          "status": "completed",
+          "updatedAt": 1793808125054
+        }
+      },
+      "title": "开发飞书 SSO 功能分支",
+      "turns": [
+        {
+          "end": 1793808894961,
+          "start": 1793806531926,
+          "turn": 1
+        }
+      ],
+      "usage": {
+        "cacheRead": 23146624,
+        "cacheWrite": 0,
+        "input": 211337,
+        "output": 135313,
+        "total": 23493274
+      },
+      "waits": {
+        "approvalMs": 8638,
+        "askUserMs": 128139,
+        "blockedMs": 1351134,
+        "handoffs": [
+          {
+            "from": "task-3",
+            "gapMs": 16235,
+            "to": "task-6"
+          },
+          {
+            "from": "task-2",
+            "gapMs": 24435,
+            "to": "task-8"
+          },
+          {
+            "from": "task-6",
+            "gapMs": 27539,
+            "to": "task-8"
+          },
+          {
+            "from": "task-5",
+            "gapMs": 36699,
+            "to": "task-7"
+          },
+          {
+            "from": "task-1",
+            "gapMs": 175550,
+            "to": "task-6"
+          },
+          {
+            "from": "task-8",
+            "gapMs": 186921,
+            "to": "task-7"
+          },
+          {
+            "from": "task-4",
+            "gapMs": 456218,
+            "to": "task-7"
+          }
+        ],
+        "humanIdleMs": 0,
+        "idleSegments": [],
+        "maxHandoffMs": 456218,
+        "preTurnMs": 2867304,
+        "preTurnRestored": false,
+        "queueMs": 2354635,
+        "readyDelayMs": 36699,
+        "taskExecMs": 4823466,
+        "waitAgentMs": 824680,
+        "wallClockMs": 5230339
+      }
+    },
+    "p2p-athena-port": {
+      "agents": {
+        "3999f8da-db7e-4cfe-b88d-436f40cf1be9": "agent-dev",
+        "975e9d85-83e4-4422-9607-e4d33364b813": "web-dev",
+        "9e0d0278-2750-4f05-84cd-0a5fd5f6adf1": "controller-dev"
+      },
+      "counters": {
+        "approvals": 0,
+        "askUsers": 0,
+        "jobs": 164,
+        "subagents": 8,
+        "teammates": 3,
+        "todoWrites": 4,
+        "toolCalls": 246,
+        "waitAgents": 21
+      },
+      "cwd": "/workspace/hermes-workspaces",
+      "leadSessionId": "session-886d1772-1e3c-4283-8703-58d74949bf8a",
+      "order": [
+        "task-1",
+        "task-2",
+        "task-3",
+        "task-4",
+        "task-5",
+        "task-6",
+        "task-7",
+        "task-8",
+        "task-9"
+      ],
+      "relations": [],
+      "sessionCreatedAt": 1793812085100,
+      "sessionId": "session-886d1772-1e3c-4283-8703-58d74949bf8a",
+      "slug": "p2p-athena-port",
+      "spans": {
+        "approval": 0,
+        "errorCount": 1,
+        "job": 164,
+        "killedCount": 2,
+        "openCount": 0,
+        "tool": 246
+      },
+      "taskCount": 9,
+      "taskStats": {
+        "completed": 9,
+        "failed": 0,
+        "in_progress": 0,
+        "pending": 0,
+        "total": 9
+      },
+      "tasks": {
+        "task-1": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793816401780,
+          "createdAt": 1793815149843,
+          "doneRank": 1,
+          "execMs": 1224875,
+          "owner": "controller-dev",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793815149843,
+              "status": "pending"
+            },
+            {
+              "at": 1793815176905,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793816401780,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 27062,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 1,
+          "startedAt": 1793815176905,
+          "status": "completed",
+          "updatedAt": 1793816401780
+        },
+        "task-2": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793817087570,
+          "createdAt": 1793815149854,
+          "doneRank": 4,
+          "execMs": 1909889,
+          "owner": "agent-dev",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793815149854,
+              "status": "pending"
+            },
+            {
+              "at": 1793815177681,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793817087570,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 27827,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 3,
+          "startedAt": 1793815177681,
+          "status": "completed",
+          "updatedAt": 1793817087570
+        },
+        "task-3": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793816777878,
+          "createdAt": 1793815149866,
+          "doneRank": 2,
+          "execMs": 1600908,
+          "owner": "web-dev",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793815149866,
+              "status": "pending"
+            },
+            {
+              "at": 1793815176970,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793816777878,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 27104,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 2,
+          "startedAt": 1793815176970,
+          "status": "completed",
+          "updatedAt": 1793816777878
+        },
+        "task-4": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793816870978,
+          "createdAt": 1793816441905,
+          "doneRank": 3,
+          "execMs": 417015,
+          "owner": "controller-dev",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793816441905,
+              "status": "pending"
+            },
+            {
+              "at": 1793816453963,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793816870978,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 12058,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 4,
+          "startedAt": 1793816453963,
+          "status": "completed",
+          "updatedAt": 1793816870978
+        },
+        "task-5": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793817123041,
+          "createdAt": 1793816794528,
+          "doneRank": 5,
+          "execMs": 305468,
+          "owner": "web-dev",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793816794528,
+              "status": "pending"
+            },
+            {
+              "at": 1793816817573,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793817123041,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 23045,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 5,
+          "startedAt": 1793816817573,
+          "status": "completed",
+          "updatedAt": 1793817123041
+        },
+        "task-6": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793817415860,
+          "createdAt": 1793817203492,
+          "doneRank": 6,
+          "execMs": 172218,
+          "owner": "controller-dev",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793817203492,
+              "status": "pending"
+            },
+            {
+              "at": 1793817243642,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793817415860,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 40150,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 6,
+          "startedAt": 1793817243642,
+          "status": "completed",
+          "updatedAt": 1793817415860
+        },
+        "task-7": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793817905596,
+          "createdAt": 1793817203509,
+          "doneRank": 7,
+          "execMs": 629481,
+          "owner": "agent-dev",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793817203509,
+              "status": "pending"
+            },
+            {
+              "at": 1793817276115,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793817905596,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 72606,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 7,
+          "startedAt": 1793817276115,
+          "status": "completed",
+          "updatedAt": 1793817905596
+        },
+        "task-8": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793818352021,
+          "createdAt": 1793818022636,
+          "doneRank": 8,
+          "execMs": 273658,
+          "owner": "controller-dev",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793818022636,
+              "status": "pending"
+            },
+            {
+              "at": 1793818078363,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793818352021,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 55727,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 9,
+          "startedAt": 1793818078363,
+          "status": "completed",
+          "updatedAt": 1793818352021
+        },
+        "task-9": {
+          "blockedBy": [],
+          "blockedWaitMs": null,
+          "completedAt": 1793818616610,
+          "createdAt": 1793818022650,
+          "doneRank": 9,
+          "execMs": 545242,
+          "owner": "agent-dev",
+          "ownerIsLead": false,
+          "phases": [
+            {
+              "at": 1793818022650,
+              "status": "pending"
+            },
+            {
+              "at": 1793818071368,
+              "status": "in_progress"
+            },
+            {
+              "at": 1793818616610,
+              "status": "completed"
+            }
+          ],
+          "queueMs": 48718,
+          "readyAt": null,
+          "readyDelayMs": null,
+          "startRank": 8,
+          "startedAt": 1793818071368,
+          "status": "completed",
+          "updatedAt": 1793818616610
+        }
+      },
+      "title": "Rust 实现 P2P 打洞与中控平台",
+      "turns": [
+        {
+          "end": 1793813965484,
+          "start": 1793812333068,
+          "turn": 1
+        },
+        {
+          "end": 1793814927575,
+          "start": 1793814596180,
+          "turn": 2
+        },
+        {
+          "end": 1793817157168,
+          "start": 1793814927607,
+          "turn": 3
+        },
+        {
+          "end": 1793817525095,
+          "start": 1793817157181,
+          "turn": 4
+        },
+        {
+          "end": 1793818865564,
+          "start": 1793817715884,
+          "turn": 5
+        },
+        {
+          "end": 1793819039850,
+          "start": 1793819028968,
+          "turn": 6
+        }
+      ],
+      "usage": {
+        "cacheRead": 49146496,
+        "cacheWrite": 0,
+        "input": 165425,
+        "output": 295714,
+        "total": 49607635
+      },
+      "waits": {
+        "approvalMs": 0,
+        "askUserMs": 0,
+        "blockedMs": 0,
+        "handoffs": [
+          {
+            "from": "task-3",
+            "gapMs": 39695,
+            "to": "task-5"
+          },
+          {
+            "from": "task-1",
+            "gapMs": 52183,
+            "to": "task-4"
+          },
+          {
+            "from": "task-5",
+            "gapMs": 120601,
+            "to": "task-6"
+          },
+          {
+            "from": "task-2",
+            "gapMs": 156072,
+            "to": "task-6"
+          },
+          {
+            "from": "task-7",
+            "gapMs": 165772,
+            "to": "task-9"
+          },
+          {
+            "from": "task-4",
+            "gapMs": 372664,
+            "to": "task-6"
+          },
+          {
+            "from": "task-6",
+            "gapMs": 655508,
+            "to": "task-9"
+          }
+        ],
+        "humanIdleMs": 984934,
+        "idleSegments": [
+          {
+            "afterTurn": 1,
+            "end": 1793814596180,
+            "ms": 630696,
+            "start": 1793813965484
+          },
+          {
+            "afterTurn": 2,
+            "end": 1793814927607,
+            "ms": 32,
+            "start": 1793814927575
+          },
+          {
+            "afterTurn": 3,
+            "end": 1793817157181,
+            "ms": 13,
+            "start": 1793817157168
+          },
+          {
+            "afterTurn": 4,
+            "end": 1793817715884,
+            "ms": 190789,
+            "start": 1793817525095
+          },
+          {
+            "afterTurn": 5,
+            "end": 1793819028968,
+            "ms": 163404,
+            "start": 1793818865564
+          }
+        ],
+        "maxHandoffMs": 655508,
+        "preTurnMs": 247968,
+        "preTurnRestored": false,
+        "queueMs": 334297,
+        "readyDelayMs": 0,
+        "taskExecMs": 7078754,
+        "waitAgentMs": 2298402,
+        "wallClockMs": 6954750
+      }
+    }
+  },
+  "source": {
+    "fixtureSha256": {
+      "athena-plan-board": "4823a72ab05eb318aeb0d98e4ce368c27e3a595073deb98f4fa5a45733421865",
+      "baklib-feishu-sso": "2045c8bfc177e62d98e496f3aebc6969af19c0b29cd79dd249e94aeb3bc03025",
+      "p2p-athena-port": "efb75f42bbd728ae519a0af1fd48682a69be05077e976374ac3e80da23dccdc2"
+    },
+    "snapshotSha256": {
+      "athena-plan-board": "b68ec0581ba74aacac25cda70a3727498246bfddc7aaf395ba2ae019c0a72750",
+      "baklib-feishu-sso": "565ae33e1664abbda4d30510266c9eede6202b12f95d5339b0367f6db128bbcd",
+      "p2p-athena-port": "dddc1ba639ff98d6393c73fa310c020b8f8d474253e00781ef24cd9610e40820"
+    }
+  }
+}

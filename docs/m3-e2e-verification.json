@@ -1,0 +1,255 @@
+{
+  "verifiedAt": "2026-11-05T01:47:53.319Z",
+  "instance": "http://127.0.0.1:8089/?token=***",
+  "sessions": [
+    {
+      "slug": "baklib",
+      "phase": "before-new",
+      "stats": {
+        "tasks": 8,
+        "baselineCount": 7,
+        "addedCount": 0,
+        "changesVisible": 0,
+        "currentTime": 1793807661022,
+        "rangeStart": 1793803664622,
+        "rangeEnd": 1793808894961,
+        "duration": 5230339,
+        "tailMs": 34053307,
+        "preview": false,
+        "changes": [],
+        "changesText": "回放时刻暂无计划变更（未来变更尚未发生）",
+        "newBadges": 0,
+        "newTaskIds": [],
+        "plannedNodes": [
+          "task-8"
+        ],
+        "relationEdges": 0,
+        "splitRows": [],
+        "hasPreview": true,
+        "aria": {
+          "play": "播放回放",
+          "pressed": "false",
+          "changesRegion": ""
+        },
+        "errors": [],
+        "a11y": {
+          "nodeTabIndex": "0",
+          "nodeAriaLabel": "task-1 T1 P0 核心：飞书集成模型 + OmniAuth 策略 + OAuth 接线，已完成，负责人 Lead",
+          "playAriaLabel": "播放回放",
+          "playAriaPressed": "false",
+          "rootRole": "region",
+          "rootAriaLabel": "任务地图"
+        },
+        "frameMs": 2.26
+      }
+    },
+    {
+      "slug": "baklib",
+      "phase": "after-new",
+      "stats": {
+        "tasks": 8,
+        "baselineCount": 7,
+        "addedCount": 1,
+        "changesVisible": 1,
+        "currentTime": 1793808894961,
+        "rangeStart": 1793803664622,
+        "rangeEnd": 1793808894961,
+        "duration": 5230339,
+        "tailMs": 34053307,
+        "preview": false,
+        "changes": [
+          {
+            "kind": "added",
+            "task": "task-8",
+            "at": 1793807665978,
+            "text": "+1:06:41 新增 新增任务 T7a 验收预检与验收报告骨架（T1/T3/T6 已完成部分）",
+            "jump": true
+          }
+        ],
+        "changesText": "+1:06:41 新增 新增任务 T7a 验收预检与验收报告骨架（T1/T3/T6 已完成部分）",
+        "newBadges": 1,
+        "newTaskIds": [
+          "task-8"
+        ],
+        "plannedNodes": [],
+        "relationEdges": 0,
+        "splitRows": [],
+        "hasPreview": true,
+        "aria": {
+          "play": "播放回放",
+          "pressed": "false",
+          "changesRegion": ""
+        },
+        "errors": [],
+        "a11y": {
+          "nodeTabIndex": "0",
+          "nodeAriaLabel": "task-1 T1 P0 核心：飞书集成模型 + OmniAuth 策略 + OAuth 接线，已完成，负责人 Lead",
+          "playAriaLabel": "播放回放",
+          "playAriaPressed": "false",
+          "rootRole": "region",
+          "rootAriaLabel": "任务地图"
+        },
+        "frameMs": 2.27
+      }
+    },
+    {
+      "slug": "p2p",
+      "phase": "summary",
+      "stats": {
+        "tasks": 9,
+        "baselineCount": 3,
+        "addedCount": 6,
+        "changesVisible": 6,
+        "currentTime": 1793819039850,
+        "rangeStart": 1793812085100,
+        "rangeEnd": 1793819039850,
+        "duration": 6954750,
+        "tailMs": 23912574,
+        "preview": false,
+        "changes": [
+          {
+            "kind": "added",
+            "task": "task-4",
+            "at": 1793816441905,
+            "text": "+1:12:37 新增 新增任务 controller 内嵌 React 中控台（rust-embed）+ 前后端 API 契约对齐 + hermes 重新部署",
+            "jump": true
+          },
+          {
+            "kind": "added",
+            "task": "task-5",
+            "at": 1793816794528,
+            "text": "+1:18:29 新增 新增任务 中控台真实后端联调（hermes 单二进制 console，登录+拓扑+操作截图+契约差异）",
+            "jump": true
+          },
+          {
+            "kind": "added",
+            "task": "task-6",
+            "at": 1793817203492,
+            "text": "+1:25:18 新增 新增任务 controller 重新嵌入最新 React dist + 重新部署 hermes + 修 404 文案 bug",
+            "jump": true
+          },
+          {
+            "kind": "added",
+            "task": "task-7",
+            "at": 1793817203509,
+            "text": "+1:25:18 新增 新增任务 Agent 公网路径打洞验证（排除 ZeroTier 候选）+ TUN 模式 netns 真机验证",
+            "jump": true
+          },
+          {
+            "kind": "added",
+            "task": "task-8",
+            "at": 1793818022636,
+            "text": "+1:38:58 新增 新增任务 Controller 中继修复：force_relay 双端下发 + hello_ack/config_update 携带对端候选 + 拓扑边刷新",
+            "jump": true
+          },
+          {
+            "kind": "added",
+            "task": "task-9",
+            "at": 1793818022650,
+            "text": "+1:38:58 新增 新增任务 Agent 中继修复：全 peer 定期 NL1R 登记 + 收到中继帧自动切 relay + 中继统计",
+            "jump": true
+          }
+        ],
+        "changesText": "+1:12:37 新增 新增任务 controller 内嵌 React 中控台（rust-embed）+ 前后端 API 契约对齐 + hermes 重新部署 +1:18:29 新增 新增任务 中控台真实后端联调（hermes 单二进制 console，登录+拓扑+操作截图+契约差异） +1:25:18 新增 新增任务 controller 重新嵌入最新 React dist + 重新部署 hermes + 修 404 文案 bug +1:25:18 新增 新增任务 Agent 公网路径打洞验证（排除 ZeroTier 候选）+ TUN 模式 netns 真机验证 +1:38:58 新增 新增任务 Controller 中继修复：force_relay 双端下发 + hello_ack/config_update 携带对端候选 + 拓扑边刷新 +1:38:58 新增 新增任务 Agent",
+        "newBadges": 6,
+        "newTaskIds": [
+          "task-4",
+          "task-5",
+          "task-6",
+          "task-7",
+          "task-9",
+          "task-8"
+        ],
+        "plannedNodes": [],
+        "relationEdges": 0,
+        "splitRows": [],
+        "hasPreview": true,
+        "aria": {
+          "play": "播放回放",
+          "pressed": "false",
+          "changesRegion": ""
+        },
+        "errors": [],
+        "a11y": {
+          "nodeTabIndex": "0",
+          "nodeAriaLabel": "task-1 实现 Athena Port 控制面 M1（controller + STUN + UDP 中继 + TLS/WSS + SQLite），已完成，负责人 controller-dev",
+          "playAriaLabel": "播放回放",
+          "playAriaPressed": "false",
+          "rootRole": "region",
+          "rootAriaLabel": "任务地图"
+        },
+        "frameMs": 1.9
+      }
+    },
+    {
+      "slug": "athena",
+      "phase": "summary",
+      "stats": {
+        "tasks": 6,
+        "baselineCount": 5,
+        "addedCount": 1,
+        "changesVisible": 1,
+        "currentTime": 1793813249656,
+        "rangeStart": 1793810366355,
+        "rangeEnd": 1793813249656,
+        "duration": 2883301,
+        "tailMs": 29703731,
+        "preview": false,
+        "changes": [
+          {
+            "kind": "added",
+            "task": "task-6",
+            "at": 1793811372119,
+            "text": "+16:46 新增 新增任务 独立评审：super-athena 全套设计文档一致性与质量",
+            "jump": true
+          }
+        ],
+        "changesText": "+16:46 新增 新增任务 独立评审：super-athena 全套设计文档一致性与质量",
+        "newBadges": 1,
+        "newTaskIds": [
+          "task-6"
+        ],
+        "plannedNodes": [],
+        "relationEdges": 0,
+        "splitRows": [],
+        "hasPreview": true,
+        "aria": {
+          "play": "播放回放",
+          "pressed": "false",
+          "changesRegion": ""
+        },
+        "errors": [],
+        "a11y": {
+          "nodeTabIndex": "0",
+          "nodeAriaLabel": "task-5 调研：竞品、Rust 技术栈与前端技术核验（super-athena/research），已完成，负责人 researcher",
+          "playAriaLabel": "播放回放",
+          "playAriaPressed": "false",
+          "rootRole": "region",
+          "rootAriaLabel": "任务地图"
+        },
+        "frameMs": 1.6
+      }
+    }
+  ],
+  "synthetic": {
+    "split": {
+      "injected": {
+        "parent": "task-1",
+        "child": "task-8"
+      },
+      "splitRows": [
+        "+1:27:10 拆分 拆分 task-1 → task-8（合成数据）"
+      ],
+      "changesVisible": 2,
+      "changesText": "+1:06:41 新增 新增任务 T7a 验收预检与验收报告骨架（T1/T3/T6 已完成部分） +1:27:10 拆分 拆分 task-1 → task-8（合成数据）"
+    },
+    "longSession": {
+      "renderedTasks": 19,
+      "renderedGanttRows": 8,
+      "fps": 120.1,
+      "frameMs": 2.98,
+      "hasScrollHint": true
+    }
+  },
+  "consoleErrors": []
+}
